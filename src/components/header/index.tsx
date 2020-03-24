@@ -6,6 +6,10 @@ import { Link } from 'umi';
 
 const { Item } = Menu;
 
+interface Pathname {
+  pathname: string,
+}
+
 interface menuRoute {
   route: string;
   name: string;
@@ -19,7 +23,10 @@ const menuData: menuRoute[] = [
   { route: '/rankList', name: 'rankList' },
 ];
 
-const PageHeader = (props: any) => {
+
+
+const PageHeader = (props: Pathname) => {
+  console.log(props);
   const { pathname } = props;
   return (
     <Row className={styles.header}>
