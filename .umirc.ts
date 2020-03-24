@@ -2,13 +2,16 @@
  * @Author: Wenzhe
  * @Date: 2020-03-20 13:49:05
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-03-24 09:43:14
+ * @LastEditTime: 2020-03-24 15:26:34
  */
 import { defineConfig } from 'umi';
 
 export default defineConfig({
   history: { type: 'hash' },
-  locale: { antd: true },
+  // locale: { default: 'zh-CN', antd: true },
+  antd: {
+    // dark: true,
+  },
   routes: [
     // { path: '/', component: '@/pages/index' },
     {
