@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-03-20 13:49:05
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-03-20 15:24:59
+ * @LastEditTime: 2020-03-24 09:43:14
  */
 import { defineConfig } from 'umi';
 
