@@ -7,7 +7,7 @@ import { Link } from 'umi';
 const { Item } = Menu;
 
 interface Pathname {
-  pathname: string,
+  pathname: string;
 }
 
 interface menuRoute {
@@ -22,8 +22,6 @@ const menuData: menuRoute[] = [
   { route: '/contest', name: 'contest' },
   { route: '/rankList', name: 'rankList' },
 ];
-
-
 
 const PageHeader = (props: Pathname) => {
   console.log(props);
