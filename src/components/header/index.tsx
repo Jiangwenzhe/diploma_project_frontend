@@ -1,34 +1,47 @@
 import React from 'react';
-import { Menu } from 'antd';
+import { Menu, Row, Col } from 'antd';
 import styles from './index.less';
 import { Link } from 'umi';
+// import { HomeOutlined }  from '@ant-design/icons';
 
 const { Item } = Menu;
 
-const PageHeader = (props: {}) => {
+interface menuRoute {
+  route: string;
+  name: string;
+}
+
+const menuData: menuRoute[] = [
+  { route: '/', name: 'Home' },
+  { route: '/problems', name: 'problems' },
+  { route: '/discuss', name: 'discuss' },
+  { route: '/contest', name: 'contest' },
+  { route: '/rankList', name: 'rankList' },
+];
+
+const PageHeader = (props: any) => {
+  const { pathname } = props;
   return (
-    <Menu
-      className={styles.header}
-      mode="horizontal"
-      style={{ lineHeight: '60px', padding: '0 30px 0 30px' }}
-      defaultSelectedKeys={['1']}
-    >
-      <Item key="1">
-        <Link to="/">Home</Link>
-      </Item>
-      <Item key="2">
-        <Link to="/problems">problems</Link>
-      </Item>
-      <Item key="3">
-        <Link to="/discuss">discuss</Link>
-      </Item>
-      <Item key="4">
-        <Link to="/contest">contest</Link>
-      </Item>
-      <Item key="5">
-        <Link to="/rankList">rankList</Link>
-      </Item>
-    </Menu>
+    <Row className={styles.header}>
+      <Col span={1}></Col>
+      <Col>
+        <Menu
+          // className={styles.header}
+          mode="horizontal"
+          style={{ lineHeight: '60px', padding: '0 30px 0 30px' }}
+          selectedKeys={[pathname]}
+        >
+          {menuData.map(menu => {
+            return (
+              <Item key={menu.route}>
+                <Link to={menu.route}>{menu.name}</Link>
+              </Item>
+            );
+          })}
+        </Menu>
+      </Col>
+      <Col></Col>
+    </Row>
   );
 };
 
