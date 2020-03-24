@@ -1,11 +1,16 @@
 import React from 'react';
 import PageHeader from '@/components/header/index';
 
-export default (props: { children: React.ReactNode; }) => {
+export default (props: any) => {
+  // console.log('layout props', props);
+  const {
+    location: { pathname },
+    children,
+  } = props;
   return (
     <div>
-      <PageHeader />
-        <div style={{ padding: 20 }}>{ props.children }</div>
+      <PageHeader pathname={pathname} />
+        <div style={{ padding: 20 }}>{ children }</div>
     </div>
   );
 }
