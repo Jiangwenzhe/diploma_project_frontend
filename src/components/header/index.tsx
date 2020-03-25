@@ -6,16 +6,16 @@ import { Link } from 'umi';
 
 const { Item } = Menu;
 
-interface Pathname {
+interface IPathname {
   pathname: string;
 }
 
-interface menuRoute {
+interface IMenuInfo {
   route: string;
   name: string;
 }
 
-const menuData: menuRoute[] = [
+const menuData: IMenuInfo[] = [
   { route: '/', name: 'Home' },
   { route: '/problems', name: 'problems' },
   { route: '/discuss', name: 'discuss' },
@@ -23,7 +23,7 @@ const menuData: menuRoute[] = [
   { route: '/rankList', name: 'rankList' },
 ];
 
-const PageHeader = (props: Pathname) => {
+const PageHeader = (props: IPathname) => {
   console.log(props);
   const { pathname } = props;
   return (
