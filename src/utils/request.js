@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-03-26 09:53:05
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-14 12:44:04
+ * @LastEditTime: 2020-04-14 19:02:49
  */
 /**
  * request 网络请求工具
@@ -55,13 +55,21 @@ const errorHandler = error => {
  * 配置request请求时的默认参数
  */
 
+
 const request = extend({
   errorHandler,
   // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
-  headers: {
-    // add jwt token
-    'Authorization': `Bearer ${localStorage.getItem('node-oj-token')}`
+});
+
+request.interceptors.request.use((url, options) => {
+  const jwt_token = localStorage.getItem('node-oj-token');
+  const headers = jwt_token ? {
+    'Authorization': `Bearer ${jwt_token}`
+  } : {};
+  return {
+    url, options: { ...options, headers },
   }
 });
+
 export default request;
