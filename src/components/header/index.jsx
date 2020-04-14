@@ -1,11 +1,18 @@
-import React from 'react';
-import { Menu, Row, Col, Avatar } from 'antd';
+import React, { useState } from 'react';
+import {
+  Menu,
+  Row,
+  Col,
+  Avatar,
+  Typography,
+  Button,
+} from 'antd';
 import styles from './index.less';
-import { Link } from 'umi';
-import { UserOutlined } from '@ant-design/icons';
+import { Link, connect } from 'umi';
+import LoginModal from '../loginModal';
 
-const { Item } = Menu;
-
+const { Item, SubMenu } = Menu;
+const { Text } = Typography;
 
 const menuData = [
   { route: '/', name: 'Home' },
@@ -15,33 +22,89 @@ const menuData = [
   { route: '/rankList', name: 'rankList' },
 ];
 
-const PageHeader = (props) => {
-  console.log(props);
-  const { pathname } = props;
+const PageHeader = props => {
+  const {
+    pathname,
+    user: { currentUser },
+    dispatch
+  } = props;
+  const [loginModelVisible, setLoginModelVisible] = useState(false);
+
+  const logout = () => {
+    dispatch({
+      type: 'login/logout',
+    });
+  };
+
   return (
-    <Row className={styles.header} align="middle">
-      <Col span={1}></Col>
-      <Col>
-        <Menu
-          // className={styles.header}
-          mode="horizontal"
-          style={{ lineHeight: '60px', padding: '0 30px 0 30px' }}
-          selectedKeys={[pathname]}
-        >
-          {menuData.map(menu => {
-            return (
-              <Item key={menu.route}>
-                <Link to={menu.route}>{menu.name}</Link>
-              </Item>
-            );
-          })}
-        </Menu>
-      </Col>
-      <Col offset={4} styles={styles.user}>
-        <Avatar  size="small" icon={<UserOutlined />} />
-      </Col>
-    </Row>
+    <>
+      <Row className={styles.header} align="middle">
+        <Col span={3}>{/* logo */}</Col>
+        <Col span={11}>
+          <Menu
+            mode="horizontal"
+            style={{ lineHeight: '60px' }}
+            selectedKeys={[pathname]}
+          >
+            {menuData.map(menu => {
+              return (
+                <Item key={menu.route}>
+                  <Link to={menu.route}>{menu.name}</Link>
+                </Item>
+              );
+            })}
+          </Menu>
+        </Col>
+        <Col offset={7}>
+          {!currentUser.uid ? (
+            <>
+              <Button
+                type="dashed"
+                size="small"
+                onClick={() => setLoginModelVisible(true)}
+              >
+                登录
+              </Button>
+              <Button style={{ marginLeft: '10px' }} type="dashed" size="small">
+                注册
+              </Button>
+            </>
+          ) : (
+            <Menu
+              style={{ lineHeight: '60px' }}
+              mode="horizontal"
+              selectable={false}
+            >
+              <SubMenu
+                title={
+                  <>
+                    <Avatar size="small" src={currentUser.avatar} />
+                    <Text style={{ marginLeft: '10px' }}>
+                      {currentUser.name}
+                    </Text>
+                  </>
+                }
+              >
+                <Menu.Item key="setting:1">Option 1</Menu.Item>
+                <Menu.Item key="setting:2">Option 2</Menu.Item>
+                <Menu.Item key="setting:3">Option 3</Menu.Item>
+                <Menu.Item key="logout" onClick={() => logout()}>
+                  退出登录
+                </Menu.Item>
+              </SubMenu>
+            </Menu>
+          )}
+        </Col>
+      </Row>
+      <LoginModal
+        visible={loginModelVisible}
+        hideVisible={() => setLoginModelVisible(false)}
+      />
+    </>
   );
 };
 
-export default PageHeader;
+export default connect(({ user, login }) => ({
+  user,
+  login,
+}))(PageHeader);
