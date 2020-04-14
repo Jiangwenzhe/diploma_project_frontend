@@ -1,33 +1,25 @@
 import React from 'react';
-import { Menu, Row, Col } from 'antd';
+import { Menu, Row, Col, Avatar } from 'antd';
 import styles from './index.less';
 import { Link } from 'umi';
-// import { HomeOutlined }  from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 
 const { Item } = Menu;
 
-interface IPathname {
-  pathname: string;
-}
 
-interface IMenuInfo {
-  route: string;
-  name: string;
-}
-
-const menuData: IMenuInfo[] = [
+const menuData = [
   { route: '/', name: 'Home' },
-  { route: '/problems', name: 'problems' },
+  { route: '/problem', name: 'problem' },
   { route: '/discuss', name: 'discuss' },
   { route: '/contest', name: 'contest' },
   { route: '/rankList', name: 'rankList' },
 ];
 
-const PageHeader = (props: IPathname) => {
+const PageHeader = (props) => {
   console.log(props);
   const { pathname } = props;
   return (
-    <Row className={styles.header}>
+    <Row className={styles.header} align="middle">
       <Col span={1}></Col>
       <Col>
         <Menu
@@ -45,7 +37,9 @@ const PageHeader = (props: IPathname) => {
           })}
         </Menu>
       </Col>
-      <Col></Col>
+      <Col offset={4} styles={styles.user}>
+        <Avatar  size="small" icon={<UserOutlined />} />
+      </Col>
     </Row>
   );
 };

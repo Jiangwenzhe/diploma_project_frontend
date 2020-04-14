@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-03-20 13:49:05
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-03-24 15:26:34
+ * @LastEditTime: 2020-04-14 12:50:47
  */
 import { defineConfig } from 'umi';
 
@@ -11,6 +11,13 @@ export default defineConfig({
   // locale: { default: 'zh-CN', antd: true },
   antd: {
     // dark: true,
+  },
+  proxy: {
+    '/api': {
+      target: 'http://127.0.0.1:7001/api',
+      pathRewrite: { '^/api': '' },
+      changeOrigin: true
+    }
   },
   routes: [
     // { path: '/', component: '@/pages/index' },
