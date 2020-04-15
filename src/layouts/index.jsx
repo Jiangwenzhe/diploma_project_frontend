@@ -23,7 +23,7 @@ const BasicLayout = (props) => {
   return (
     <div>
       <PageHeader pathname={pathname} user={user}/>
-      <div style={{ padding: 20 }}>{children}</div>
+      <div style={{ padding: '30px' }}>{children}</div>
     </div>
   );
 };

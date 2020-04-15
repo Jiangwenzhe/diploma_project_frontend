@@ -1,12 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Menu,
-  Row,
-  Col,
-  Avatar,
-  Typography,
-  Button,
-} from 'antd';
+import { Menu, Row, Col, Avatar, Typography, Button } from 'antd';
 import styles from './index.less';
 import { Link, connect } from 'umi';
 import LoginModal from '../loginModal';
@@ -26,7 +19,7 @@ const PageHeader = props => {
   const {
     pathname,
     user: { currentUser },
-    dispatch
+    dispatch,
   } = props;
   const [loginModelVisible, setLoginModelVisible] = useState(false);
 
@@ -44,7 +37,7 @@ const PageHeader = props => {
           <Menu
             mode="horizontal"
             style={{ lineHeight: '60px' }}
-            selectedKeys={[pathname]}
+            selectedKeys={[`/${pathname.split('/')[1]}`]}
           >
             {menuData.map(menu => {
               return (
