@@ -1,0 +1,38 @@
+.left {
+  width: 60%;
+}
+
+.right {
+  width: 30%;
+}
+
+.main {
+  display: flex;
+  width: 90%;
+}
+
+.section_title {
+  font-weight: 300;
+  font-size: 20px;
+  .tag_group {
+    :global {
+      .ant-tag {
+        font-weight: 400;
+        border-radius: 16px;
+        padding: 1px 10px;
+        border-color: #f0f0f0;
+        &:hover {
+          border-color: #1890ff;
+        }
+      }
+      .ant-tag-checkable {
+        background-color: none;
+      }
+    }
+  }
+}
+
+.section_header {
+  font-weight: 300;
+  font-size: 20px;
+}
