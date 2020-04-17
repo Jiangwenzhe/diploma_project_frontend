@@ -2,14 +2,12 @@
  * @Author: Wenzhe
  * @Date: 2020-03-20 13:49:05
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-16 15:34:16
+ * @LastEditTime: 2020-04-17 15:28:16
  */
 import { defineConfig } from 'umi';
-// import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 
 export default defineConfig({
   history: { type: 'hash' },
-  // locale: { default: 'zh-CN', antd: true },
   antd: {
     // dark: true,
   },
