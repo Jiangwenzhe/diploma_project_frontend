@@ -110,8 +110,10 @@ const ProblemList = props => {
     },
     {
       title: '题名',
-      dataIndex: 'title',
-      render: value => <Text strong>{value}</Text>,
+      // dataIndex: 'title',
+      render: value => {
+        return <Link to={`/problem/${value.pid}`}>{value.title}</Link>;
+      },
       width: '50%',
     },
     {
