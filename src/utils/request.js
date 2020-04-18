@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-03-26 09:53:05
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-14 19:02:49
+ * @LastEditTime: 2020-04-18 10:39:53
  */
 /**
  * request 网络请求工具
@@ -55,7 +55,6 @@ const errorHandler = error => {
  * 配置request请求时的默认参数
  */
 
-
 const request = extend({
   errorHandler,
   // 默认错误处理
@@ -64,12 +63,19 @@ const request = extend({
 
 request.interceptors.request.use((url, options) => {
   const jwt_token = localStorage.getItem('node-oj-token');
-  const headers = jwt_token ? {
-    'Authorization': `Bearer ${jwt_token}`
-  } : {};
+  const headers = jwt_token
+    ? {
+        Authorization: `Bearer ${jwt_token}`,
+      }
+    : {};
   return {
-    url, options: { ...options, headers },
-  }
+    url,
+    options: { ...options, headers },
+  };
+});
+
+request.interceptors.response.use(response => {
+  return response;
 });
 
 export default request;
