@@ -2,16 +2,9 @@
  * @Author: Wenzhe
  * @Date: 2020-04-15 08:24:32
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-15 08:24:42
+ * @LastEditTime: 2020-04-16 16:38:30
  */
 import request from '@/utils/request';
-
-export async function accountLogin(params) {
-  return request('/api/user/access/login', {
-    method: 'POST',
-    data: params,
-  });
-}
 
 export async function getProlebmList(params) {
   const {
@@ -19,9 +12,16 @@ export async function getProlebmList(params) {
     query: { title },
   } = params;
   if (title) {
-    return request(`/api/problem?current=${current}&&pageSize=${pageSize}&&title=${title}`);
+    return request(
+      `/api/problem?current=${current}&&pageSize=${pageSize}&&title=${title}`,
+    );
   }
   return request(`/api/problem?current=${current}&&pageSize=${pageSize}`);
+}
+
+export async function getSingleProblemInfo(params) {
+  const { pid } = params;
+  return request(`/api/problemid/${pid}`);
 }
 
 export async function getSingleProblemTestCase(params) {
@@ -49,5 +49,5 @@ export async function updateProblem(params) {
 }
 
 export async function getProblemInfo(params) {
-  return request(`/api/problem/${params}`)
+  return request(`/api/problem/${params}`);
 }
