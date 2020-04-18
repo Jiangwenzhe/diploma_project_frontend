@@ -1,16 +1,32 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import PageHeader from '../components/header/index.jsx';
-import { useRequest } from '@umijs/hooks';
-import { Button } from 'antd';
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css';
 import { connect } from 'umi';
-const BasicLayout = (props) => {
+
+let currHref = '';
+
+const BasicLayout = props => {
   const {
     location: { pathname },
     children,
     dispatch,
     user,
-    login
+    login,
+    loading,
   } = props;
+
+  const { href } = window.location;
+
+  if (currHref !== href) {
+    // currHref 和 href 不一致时说明进行了页面跳转
+    NProgress.start(); // 页面开始加载时调用 start 方法
+    if (!loading.global) {
+      // loading.global 为 false 时表示加载完毕
+      NProgress.done(); // 页面请求完毕时调用 done 方法
+      currHref = href; // 将新页面的 href 值赋值给 currHref
+    }
+  }
 
   useEffect(() => {
     if (dispatch && localStorage.getItem('node-oj-token')) {
@@ -22,13 +38,14 @@ const BasicLayout = (props) => {
 
   return (
     <div>
-      <PageHeader pathname={pathname} user={user}/>
+      <PageHeader pathname={pathname} user={user} />
       <div style={{ padding: '30px' }}>{children}</div>
     </div>
   );
 };
 
-export default connect(({ user, login }) => ({
+export default connect(({ user, login, loading }) => ({
   user,
-  login
+  login,
+  loading,
 }))(BasicLayout);
