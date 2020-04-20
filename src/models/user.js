@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-14 12:44:43
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-14 12:47:24
+ * @LastEditTime: 2020-04-20 09:36:32
  */
 import { queryCurrent, query as queryUsers } from '../service/user';
 
@@ -22,10 +22,12 @@ const UserModel = {
 
     *fetchCurrent(_, { call, put }) {
       const response = yield call(queryCurrent);
-      yield put({
-        type: 'saveCurrentUser',
-        payload: response.data,
-      });
+      if (response.data && response.data.user.uid) {
+        yield put({
+          type: 'saveCurrentUser',
+          payload: response.data.user,
+        });
+      }
     },
   },
   reducers: {
