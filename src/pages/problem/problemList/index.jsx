@@ -21,6 +21,8 @@ import {
   TagOutlined,
   createFromIconfontCN,
   DownOutlined,
+  CheckOutlined,
+  QuestionOutlined,
 } from '@ant-design/icons';
 import moment from 'moment';
 
@@ -51,6 +53,7 @@ const ProblemList = props => {
     problem: { problemList, total },
     dispatch,
     fetching,
+    user: { currentUser },
   } = props;
 
   const [pagination, setPagination] = useState({
@@ -97,10 +100,21 @@ const ProblemList = props => {
 
   const columns = [
     {
-      title: 'isFinished',
-      dataIndex: 'pid',
+      title: '',
+      dataIndex: '',
       key: 'pid',
       width: '10%',
+      render: value => {
+        if (!currentUser) return <></>;
+        const { pid } = value;
+        const { solved_list, failed_list } = currentUser;
+        if (solved_list && solved_list.includes(pid)) {
+          return <CheckOutlined style={{ color: '#52c41a' }} />;
+        }
+        if (failed_list && failed_list.includes(pid)) {
+          return <QuestionOutlined style={{ color: '#faad14' }} />;
+        }
+      },
     },
     {
       title: '#',
@@ -114,7 +128,7 @@ const ProblemList = props => {
       render: value => {
         return <Link to={`/problem/${value.pid}`}>{value.title}</Link>;
       },
-      width: '50%',
+      width: '40%',
     },
     {
       title: '题解',
@@ -126,8 +140,7 @@ const ProblemList = props => {
     {
       title: '通过率',
       render: value => {
-        const rate = (value.solve / value.submit) * 100;
-        // return <Statistic value={isNaN(rate) ? 0 : rate} suffix="%"/>
+        const rate = Math.round((value.solve / value.submit) * 100);
         return <>{`${isNaN(rate) ? 0 : rate}%`}</>;
       },
       width: '10%',
@@ -221,7 +234,8 @@ const ProblemList = props => {
   );
 };
 
-export default connect(({ problem, loading }) => ({
+export default connect(({ problem, loading, user }) => ({
   problem,
+  user,
   fetching: loading.effects['problem/fetchProblemList'],
 }))(ProblemList);
