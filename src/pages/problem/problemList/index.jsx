@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Card,
   Typography,
   Input,
   Table,
-  Button,
-  Popconfirm,
-  Statistic,
   Row,
   Col,
   Tag,
@@ -17,21 +13,15 @@ import {
 import styles from './index.less';
 import request from '@/utils/request';
 import { connect, Link } from 'umi';
-import {
-  TagOutlined,
-  createFromIconfontCN,
-  DownOutlined,
-  CheckOutlined,
-  QuestionOutlined,
-} from '@ant-design/icons';
-import moment from 'moment';
+import { createFromIconfontCN, DownOutlined } from '@ant-design/icons';
+import icon_font_url from '../../../config/iconfont';
 
-const { Text, Title } = Typography;
+const { Title } = Typography;
 const { CheckableTag } = Tag;
 const { Search } = Input;
 
 const IconFont = createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_1756231_qmkck7zzv8.js',
+  scriptUrl: icon_font_url,
 });
 
 const difficultyToTag = (difficulty) => {

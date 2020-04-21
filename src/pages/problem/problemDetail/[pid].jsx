@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-16 16:36:43
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-21 20:18:22
+ * @LastEditTime: 2020-04-21 20:56:22
  */
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './index.less';
@@ -45,6 +45,7 @@ import CodeCopyablePreview from '../../../components/CodeCopyablePreview';
 import { BtoMB } from '../../../utils/tool_fuc';
 import ShowCode from '../../../components/showCode/index';
 import { createFromIconfontCN, CaretRightOutlined } from '@ant-design/icons';
+import icon_font_url from '../../../config/iconfont';
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -52,7 +53,7 @@ const { Title, Text } = Typography;
 const { Panel } = Collapse;
 
 const IconFont = createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_1756231_75knjkwwy3e.js',
+  scriptUrl: icon_font_url,
 });
 
 // 从 language_template 根据语言加载模版
