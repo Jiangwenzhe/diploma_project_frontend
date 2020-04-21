@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-16 16:36:43
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-17 10:57:05
+ * @LastEditTime: 2020-04-21 17:39:22
  */
 import { getSingleProblemInfo } from '@/service/problem';
 import { createSubmission } from '@/service/submission';
@@ -43,6 +43,14 @@ const Model = {
           },
         });
       }
+    },
+    *cleanSubmission({ payload }, { call, put }) {
+      yield put({
+        type: 'save',
+        payload: {
+          submissionInfo: {},
+        },
+      });
     },
   },
   reducers: {
