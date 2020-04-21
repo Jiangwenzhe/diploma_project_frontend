@@ -14,6 +14,8 @@ import {
   Badge,
   Drawer,
   Empty,
+  Alert,
+  Table,
 } from 'antd';
 import { connect } from 'umi';
 import ReactMarkdown from 'react-markdown';
@@ -26,6 +28,15 @@ import {
 } from '../../../config/editor-theme';
 import language_config from '../../../config/editor-language';
 import { judge_result } from '../../../config/judge_result';
+import {
+  cpp_template,
+  c_template,
+  java_template,
+  py_2_template,
+  py_3_template,
+} from '../../../config/language_template';
+import { BtoMB } from '../../../utils/tool_fuc';
+import ShowCode from '../../../components/showCode/index';
 import { createFromIconfontCN, CaretRightOutlined } from '@ant-design/icons';
 
 const { TabPane } = Tabs;
@@ -34,14 +45,66 @@ const { Title, Text } = Typography;
 const { Panel } = Collapse;
 
 const IconFont = createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_1756231_hpadq9p8rid.js',
+  scriptUrl: '//at.alicdn.com/t/font_1756231_75knjkwwy3e.js',
 });
 
-const problemDetail = props => {
+// 从 language_template 根据语言加载模版
+const setLanguageTemplate = (language) => {
+  switch (language) {
+    case 'C++':
+      return cpp_template;
+    case 'C':
+      return c_template;
+    case 'Java':
+      return java_template;
+    case 'Python2':
+      return py_2_template;
+    case 'Python3':
+      return py_3_template;
+    default:
+      return '// type your code here...';
+  }
+};
+
+// 从 localSotrage 从加载之前提交的问题
+const getLastSubmissionFromLocalStorage = (pid) => {
+  const last_submission = localStorage.getItem(`node-oj-problem-${pid}`);
+  if (!last_submission) return false;
+  return JSON.parse(last_submission);
+};
+
+const loadEditorTheme = (selected_theme) => {
+  return new Promise((res) => {
+    monaco
+      .init()
+      .then((monaco) => {
+        import(`../../../../public/monaco_themes/${selected_theme}.json`)
+          .then((data) => {
+            return data;
+          })
+          .then((theme_data) => {
+            monaco.editor.defineTheme(
+              selected_theme.replace(/\s/gi, ''),
+              theme_data,
+            );
+            res();
+          });
+      })
+      .catch((error) =>
+        console.error(
+          'An error occurred during initialization of Monaco: ',
+          error,
+        ),
+      );
+  });
+};
+
+const problemDetail = (props) => {
   const {
     match,
     dispatch,
     problemDetail: { problemInfo, submissionInfo },
+    user: { currentUser },
     submitting,
   } = props;
 
@@ -49,11 +112,34 @@ const problemDetail = props => {
     console.log(key);
   }
 
-  // TODO: 从后台获取代码模版
-  const [editortheme, setEditorTheme] = useState('light');
-  const [language, setLanguage] = useState('cpp');
-  const [judge_language, setJudgeLanguage] = useState('C++');
-  const [code, setCode] = useState('// type your code...');
+  // loadEditorTheme returns a promise
+  const [editortheme, setEditorTheme] = useState(() => {
+    const last_submission = getLastSubmissionFromLocalStorage(match.params.pid);
+    if (!last_submission) return 'light';
+    const { editortheme } = last_submission;
+    if (default_editor_theme.includes(editortheme)) {
+      return editortheme;
+    } else {
+      loadEditorTheme(editortheme).then((_) => {
+        setEditorTheme(editortheme);
+      });
+    }
+  });
+  const [language, setLanguage] = useState(() => {
+    const last_submission = getLastSubmissionFromLocalStorage(match.params.pid);
+    if (!last_submission) return 'cpp';
+    return last_submission.language;
+  });
+  const [judge_language, setJudgeLanguage] = useState(() => {
+    const last_submission = getLastSubmissionFromLocalStorage(match.params.pid);
+    if (!last_submission) return 'C++';
+    return last_submission.judge_language;
+  });
+  const [code, setCode] = useState(() => {
+    const last_submission = getLastSubmissionFromLocalStorage(match.params.pid);
+    if (!last_submission) return setLanguageTemplate(judge_language);
+    return last_submission.code;
+  });
   const [editorOptions, setEditorOptions] = useState({
     fontSize: '14px',
     minimap: {
@@ -89,42 +175,50 @@ const problemDetail = props => {
   };
 
   // 更改编辑器 theme
-  const handleThemeSelectChange = selected_tehme => {
-    console.log(`selected ${selected_tehme}`);
-    // TODO: 把 这个 theme 移动到 config 文件中
-    if (default_editor_theme.includes(selected_tehme)) {
-      setEditorTheme(selected_tehme);
+  const handleThemeSelectChange = (selected_theme) => {
+    // console.log(`selected ${selected_theme}`);
+    // if (default_editor_theme.includes(selected_theme)) {
+    //   setEditorTheme(selected_theme);
+    // } else {
+    //   monaco
+    //     .init()
+    //     .then(monaco => {
+    //       import(`../../../../public/monaco_themes/${selected_theme}.json`)
+    //         .then(data => {
+    //           console.log('data', data);
+    //           return data;
+    //         })
+    //         .then(theme_data => {
+    //           console.log('---', selected_theme.replace(/\s/gi, ''));
+    //           monaco.editor.defineTheme(
+    //             selected_theme.replace(/\s/gi, ''),
+    //             theme_data,
+    //           );
+    //           setEditorTheme(selected_theme.replace(/\s/gi, ''));
+    //         });
+    //     })
+    //     .catch(error =>
+    //       console.error(
+    //         'An error occurred during initialization of Monaco: ',
+    //         error,
+    //       ),
+    //     );
+    // }
+    if (default_editor_theme.includes(selected_theme)) {
+      setEditorTheme(selected_theme);
     } else {
-      monaco
-        .init()
-        .then(monaco => {
-          import(`../../../../public/monaco_themes/${selected_tehme}.json`)
-            .then(data => {
-              console.log('data', data);
-              return data;
-            })
-            .then(theme_data => {
-              console.log('---', selected_tehme.replace(/\s/gi, ''));
-              monaco.editor.defineTheme(
-                selected_tehme.replace(/\s/gi, ''),
-                theme_data,
-              );
-              setEditorTheme(selected_tehme.replace(/\s/gi, ''));
-            });
-        })
-        .catch(error =>
-          console.error(
-            'An error occurred during initialization of Monaco: ',
-            error,
-          ),
-        );
+      loadEditorTheme(selected_theme).then((_) =>
+        setEditorTheme(selected_theme.replace(/\s/gi, '')),
+      );
     }
   };
 
   // 更改判题所需的 language
-  const handleLanguageSelectChange = selected_language => {
+  const handleLanguageSelectChange = (selected_language) => {
     // 设置提交后台的判题语言
     setJudgeLanguage(selected_language);
+    // 设置新的语言模版
+    // setCode(setLanguageTemplate(selected_language));
     // 更改页面高亮的语言设置
     if (selected_language === 'C++') {
       setLanguage('cpp');
@@ -148,8 +242,13 @@ const problemDetail = props => {
     }
   };
 
+  // 点击 Redo 重制 editor 模版
+  const handleEditorRedo = () => {
+    setCode(setLanguageTemplate(judge_language));
+  };
+
   // 更改编辑器的字体大小
-  const handleFontSelectorChange = fontSize => {
+  const handleFontSelectorChange = (fontSize) => {
     setEditorOptions({ ...editorOptions, fontSize: fontSize });
   };
 
@@ -175,16 +274,66 @@ const problemDetail = props => {
 
   // 提交解答给后台 judge
   const submit_solution = () => {
+    const {
+      params: { pid },
+    } = match;
     const payload = {
       pid: problemInfo.pid,
       language: judge_language,
       code: code,
     };
+    // 在这里设置回答的 localStorage
+    // 储存的格式应该是 key: node-oj-problem-pid 的格式, value: { code, language, editorOptions}
+    const last_submission = {
+      judge_language,
+      code,
+      language,
+      editortheme,
+      editorOptions,
+    };
+    localStorage.setItem(
+      `node-oj-problem-${pid}`,
+      JSON.stringify(last_submission),
+    );
     dispatch({
       type: 'problemDetail/createSubmission',
       payload,
     });
   };
+
+  const DrawerTableColumns = [
+    {
+      title: '#',
+      render: (value) => value.test_case,
+    },
+    {
+      title: 'Result',
+      dataIndex: 'result',
+      render: (result) => {
+        if (result === 0) {
+          return <Tag color="#52c41a">{judge_result[result]}</Tag>;
+        } else {
+          return <Tag color="#ff4d4f">{judge_result[result]}</Tag>;
+        }
+      },
+    },
+    {
+      title: 'CPU Time',
+      dataIndex: 'cpu_time',
+    },
+    {
+      title: 'Real Time',
+      dataIndex: 'real_time',
+    },
+    {
+      title: 'Singal',
+      dataIndex: 'signal',
+    },
+    {
+      title: 'Error',
+      dataIndex: 'error',
+    },
+  ];
 
   return (
     <>
@@ -270,11 +419,11 @@ const problemDetail = props => {
           <Row>
             <Col>
               <Select
-                defaultValue="C++"
+                defaultValue={judge_language}
                 style={{ width: 300 }}
                 onChange={handleLanguageSelectChange}
               >
-                {language_config.map(item => (
+                {language_config.map((item) => (
                   <Option key={item.name} key={item.language}>
                     {item.name}
                   </Option>
@@ -282,7 +431,7 @@ const problemDetail = props => {
               </Select>
             </Col>
             <Col>
-              <Button>redo</Button>
+              <Button onClick={() => handleEditorRedo()}>redo</Button>
             </Col>
             <Col>
               <Button onClick={() => showEditorSettingModal()}>设置</Button>
@@ -290,7 +439,7 @@ const problemDetail = props => {
           </Row>
           <div className={styles.editor_window}>
             <ControlledEditor
-              height="80vh"
+              height="600px"
               width="100%"
               language={language}
               theme={editortheme}
@@ -301,30 +450,55 @@ const problemDetail = props => {
             />
           </div>
           <div className={styles.submit_bar}>
-            <span>
-              <span style={{ fontSize: '14px', marginRight: '10px' }}>
-                提交状态:{' '}
+            {/* 如果用户提交过这个题目的话就显示 <Alert /> , 但是如果在题目内部提交的话就不显示*/}
+            {currentUser.uid &&
+            currentUser.submit_list.includes(problemInfo.pid) &&
+            !submissionInfo._id ? (
+              // 这里就在用户提交列表中匹配
+              currentUser.solved_list.includes(problemInfo.pid) ? (
+                <Alert
+                  message="Last Submit is Accepted 👍"
+                  type="success"
+                  showIcon
+                />
+              ) : (
+                <Alert
+                  message="Last Submit is Wrong 💪"
+                  type="warning"
+                  showIcon
+                />
+              )
+            ) : // 如果 submission._id 存在的话就显示提交的结果
+            submissionInfo._id ? (
+              <span>
+                <span style={{ fontSize: '14px', marginRight: '10px' }}>
+                  提交状态:{' '}
+                </span>
+                <Button
+                  size="large"
+                  type="dashed"
+                  onClick={() => showJudgeResultDrawer()}
+                  style={{ padding: '0px 13px', borderRadius: '4px' }}
+                >
+                  {submitting ? (
+                    <Badge status="processing" text="submitting..." />
+                  ) : submissionInfo.result === 0 ? (
+                    <Badge
+                      status="success"
+                      text={judge_result[submissionInfo.result]}
+                    />
+                  ) : (
+                    <Badge
+                      status="error"
+                      text={judge_result[submissionInfo.result]}
+                    />
+                  )}
+                </Button>
               </span>
-              <Button
-                size="large"
-                onClick={() => showJudgeResultDrawer()}
-                style={{ padding: '6px 30px', borderRadius: '4px' }}
-              >
-                {submitting ? (
-                  <Badge status="warning" text="submitting..." />
-                ) : submissionInfo.result === 0 ? (
-                  <Badge
-                    status="success"
-                    text={judge_result[submissionInfo.result]}
-                  />
-                ) : (
-                  <Badge
-                    status="error"
-                    text={judge_result[submissionInfo.result]}
-                  />
-                )}
-              </Button>
-            </span>
+            ) : (
+              // 如果 submission._id 不存在就显示 <div />
+              <div />
+            )}
             <Button
               size="large"
               type="primary"
@@ -358,13 +532,17 @@ const problemDetail = props => {
           </Col>
           <Col>
             <Select
-              defaultValue="light"
+              showSearch
+              defaultValue={editortheme}
               style={{ width: 200 }}
               onChange={handleThemeSelectChange}
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
             >
               <Option value="light">light</Option>
               <Option value="dark">dark</Option>
-              {custom_editor_theme.map(theme => (
+              {custom_editor_theme.map((theme) => (
                 <Option key={theme} value={theme}>
                   {theme}
                 </Option>
@@ -387,7 +565,7 @@ const problemDetail = props => {
               style={{ width: 200 }}
               onChange={handleFontSelectorChange}
             >
-              {[12, 13, 14, 15, 16, 17, 18, 19, 20].map(fontSize => (
+              {[12, 13, 14, 15, 16, 17, 18, 19, 20].map((fontSize) => (
                 <Option
                   key={`${fontSize}px`}
                   value={`${fontSize}px`}
@@ -406,16 +584,47 @@ const problemDetail = props => {
         onClose={() => hideJudgeResultDrawer()}
         visible={judgeResultDrawerVisible}
       >
-        {/* <Result
-          status="success"
-          title={judge_result[submissionInfo.result]}
-        >
-          <h1>xsa</h1>
-        </Result> */}
-        {submissionInfo.result ? (
-          <Row>
-            <Col span={12}></Col>
-            <Col span={12}></Col>
+        {submissionInfo._id ? (
+          <Row gutter={2}>
+            <Col span={12}>
+              <Alert
+                message={judge_result[submissionInfo.result]}
+                description={
+                  <div style={{ fontSize: '12px' }}>
+                    <span>
+                      CPU Time: {submissionInfo.status_info.cpu_time_cost}ms
+                    </span>
+                    <span style={{ marginLeft: '15px' }}>
+                      Real Time: {submissionInfo.status_info.real_time__cost}ms
+                    </span>
+                    <span style={{ marginLeft: '15px' }}>
+                      Memory : {BtoMB(submissionInfo.status_info.memory_cost)}MB
+                    </span>
+                    <span style={{ marginLeft: '15px' }}>
+                      Language : {submissionInfo.language}
+                    </span>
+                  </div>
+                }
+                type="success"
+                showIcon
+              />
+              <Divider />
+              <Table
+                columns={DrawerTableColumns}
+                dataSource={
+                  submissionInfo ? submissionInfo.info.judge_result_info : []
+                }
+                rowKey="output_md5"
+                size="small"
+              />
+            </Col>
+            <Divider type="vertical" />
+            <Col span={10}>
+              <ShowCode
+                language={submissionInfo.language}
+                code={submissionInfo.code}
+              />
+            </Col>
           </Row>
         ) : (
           <Empty />
@@ -425,9 +634,10 @@ const problemDetail = props => {
   );
 };
 
-export default connect(({ problem, problemDetail, loading }) => ({
+export default connect(({ problem, problemDetail, loading, user }) => ({
   problemDetail,
   problem,
+  user,
   fetching: loading.effects['problemDetail/fetchProblemInfo'],
   submitting: loading.effects['problemDetail/createSubmission'],
 }))(problemDetail);
