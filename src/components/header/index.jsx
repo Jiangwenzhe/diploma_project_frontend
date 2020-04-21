@@ -15,7 +15,7 @@ const menuData = [
   { route: '/rankList', name: 'rankList' },
 ];
 
-const PageHeader = props => {
+const PageHeader = (props) => {
   const {
     pathname,
     user: { currentUser },
@@ -39,7 +39,7 @@ const PageHeader = props => {
             style={{ lineHeight: '60px' }}
             selectedKeys={[`/${pathname.split('/')[1]}`]}
           >
-            {menuData.map(menu => {
+            {menuData.map((menu) => {
               return (
                 <Item key={menu.route}>
                   <Link to={menu.route}>{menu.name}</Link>
