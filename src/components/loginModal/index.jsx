@@ -1,19 +1,6 @@
 import React from 'react';
 import { connect } from 'umi';
-import {
-  Menu,
-  Row,
-  Col,
-  Avatar,
-  Typography,
-  Dropdown,
-  Button,
-  Modal,
-  Form,
-  Input,
-  Checkbox,
-  message,
-} from 'antd';
+import { Button, Modal, Form, Input, message } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 
 const layout = {
@@ -24,17 +11,17 @@ const tailLayout = {
   wrapperCol: { offset: 2, span: 22 },
 };
 
-const LoginModal = props => {
+const LoginModal = (props) => {
   const {
     visible,
     hideVisible,
     dispatch,
     submitting,
-    login: { status },
+    // login: { status },
   } = props;
 
-  const onFinish = values => {
-    dispatch({ type: 'login/login', payload: { ...values } }).then(status => {
+  const onFinish = (values) => {
+    dispatch({ type: 'login/login', payload: { ...values } }).then((status) => {
       if (status === 'ok') {
         hideVisible();
         message.success(`👏 ${values.name}, 欢迎回来 👏`);
