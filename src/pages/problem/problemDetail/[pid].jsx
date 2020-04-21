@@ -587,36 +587,55 @@ const problemDetail = (props) => {
         {submissionInfo._id ? (
           <Row gutter={2}>
             <Col span={12}>
-              <Alert
-                message={judge_result[submissionInfo.result]}
-                description={
-                  <div style={{ fontSize: '12px' }}>
-                    <span>
-                      CPU Time: {submissionInfo.status_info.cpu_time_cost}ms
-                    </span>
-                    <span style={{ marginLeft: '15px' }}>
-                      Real Time: {submissionInfo.status_info.real_time__cost}ms
-                    </span>
-                    <span style={{ marginLeft: '15px' }}>
-                      Memory : {BtoMB(submissionInfo.status_info.memory_cost)}MB
-                    </span>
-                    <span style={{ marginLeft: '15px' }}>
-                      Language : {submissionInfo.language}
-                    </span>
-                  </div>
-                }
-                type="success"
-                showIcon
-              />
-              <Divider />
-              <Table
-                columns={DrawerTableColumns}
-                dataSource={
-                  submissionInfo ? submissionInfo.info.judge_result_info : []
-                }
-                rowKey="output_md5"
-                size="small"
-              />
+              {submissionInfo.result === -2 ? (
+                <Alert
+                  message={judge_result[submissionInfo.result]}
+                  description={
+                    <div style={{ whiteSpace: 'pre-wrap' }}>
+                      {submissionInfo.status_info.error_info}
+                    </div>
+                  }
+                  type={submissionInfo.result === 0 ? 'success' : 'error'}
+                  showIcon
+                />
+              ) : (
+                <>
+                  <Alert
+                    message={judge_result[submissionInfo.result]}
+                    description={
+                      <div style={{ fontSize: '12px' }}>
+                        <span>
+                          CPU Time: {submissionInfo.status_info.cpu_time_cost}ms
+                        </span>
+                        <span style={{ marginLeft: '15px' }}>
+                          Real Time:{' '}
+                          {submissionInfo.status_info.real_time__cost}ms
+                        </span>
+                        <span style={{ marginLeft: '15px' }}>
+                          Memory :{' '}
+                          {BtoMB(submissionInfo.status_info.memory_cost)}MB
+                        </span>
+                        <span style={{ marginLeft: '15px' }}>
+                          Language : {submissionInfo.language}
+                        </span>
+                      </div>
+                    }
+                    type={submissionInfo.result === 0 ? 'success' : 'error'}
+                    showIcon
+                  />
+                  <Divider />
+                  <Table
+                    columns={DrawerTableColumns}
+                    dataSource={
+                      submissionInfo
+                        ? submissionInfo.info.judge_result_info
+                        : []
+                    }
+                    rowKey="output_md5"
+                    size="small"
+                  />
+                </>
+              )}
             </Col>
             <Divider type="vertical" />
             <Col span={10}>
