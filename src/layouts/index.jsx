@@ -3,10 +3,11 @@ import PageHeader from '../components/header/index.jsx';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 import { connect } from 'umi';
+import styles from './index.less';
 
 let currHref = '';
 
-const BasicLayout = props => {
+const BasicLayout = (props) => {
   const {
     location: { pathname },
     children,
@@ -37,9 +38,11 @@ const BasicLayout = props => {
   }, [login]);
 
   return (
-    <div>
+    <div className={styles.whole_page}>
       <PageHeader pathname={pathname} user={user} />
-      <div style={{ padding: '30px' }}>{children}</div>
+      <div className={styles.container}>
+        <div className={styles.main}>{children}</div>
+      </div>
     </div>
   );
 };
