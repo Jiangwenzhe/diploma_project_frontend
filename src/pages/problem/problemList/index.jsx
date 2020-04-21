@@ -31,7 +31,7 @@ const { CheckableTag } = Tag;
 const { Search } = Input;
 
 const IconFont = createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_1756231_o0ugrzj2f9f.js',
+  scriptUrl: '//at.alicdn.com/t/font_1756231_qmkck7zzv8.js',
 });
 
 const difficultyToTag = difficulty => {
@@ -103,21 +103,21 @@ const ProblemList = props => {
       title: '',
       dataIndex: '',
       key: 'pid',
-      width: '10%',
+      width: '5%',
       render: value => {
         if (!currentUser) return <></>;
         const { pid } = value;
         const { solved_list, failed_list } = currentUser;
         if (solved_list && solved_list.includes(pid)) {
-          return <CheckOutlined style={{ color: '#52c41a' }} />;
+          return <IconFont type="icon-check" style={{ color: '#52c41a' }} />;
         }
         if (failed_list && failed_list.includes(pid)) {
-          return <QuestionOutlined style={{ color: '#faad14' }} />;
+          return <IconFont type="icon-question" style={{ color: '#faad14' }} />;
         }
       },
     },
     {
-      title: '#',
+      title: () => <IconFont type="icon-hashtag" />,
       dataIndex: 'pid',
       key: 'pid',
       width: '10%',
