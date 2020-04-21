@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-16 16:36:43
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-21 19:54:48
+ * @LastEditTime: 2020-04-21 20:18:22
  */
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './index.less';
@@ -41,6 +41,7 @@ import {
   py_2_template,
   py_3_template,
 } from '../../../config/language_template';
+import CodeCopyablePreview from '../../../components/CodeCopyablePreview';
 import { BtoMB } from '../../../utils/tool_fuc';
 import ShowCode from '../../../components/showCode/index';
 import { createFromIconfontCN, CaretRightOutlined } from '@ant-design/icons';
@@ -349,7 +350,7 @@ const problemDetail = (props) => {
   return (
     <>
       <Row gutter={16}>
-        <Col span={8} className={styles.box_shadow}>
+        <Col span={8}>
           <Tabs onChange={handleLeftTabChange} type="card">
             <TabPane
               tab={
@@ -389,14 +390,19 @@ const problemDetail = (props) => {
                     )}
                     className={styles.custom_collapse}
                   >
-                    <Panel header="题目标签" key="1">
+                    <Panel header="输入 ｜ 输出" key="1">
+                      <CodeCopyablePreview>
+                        {problemInfo.sample_input}
+                      </CodeCopyablePreview>
+                      <CodeCopyablePreview>
+                        {problemInfo.sample_output}
+                      </CodeCopyablePreview>
+                    </Panel>
+                    <Panel header="题目标签" key="2">
                       <Tag color="#108ee9"> {problemInfo.tags}</Tag>
                     </Panel>
-                    <Panel header="提示1" key="2">
+                    <Panel header="提示1" key="3">
                       hint1123
-                    </Panel>
-                    <Panel header="This is panel header 3" key="3">
-                      321
                     </Panel>
                   </Collapse>
                 </Col>

@@ -34,7 +34,7 @@ const IconFont = createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/font_1756231_qmkck7zzv8.js',
 });
 
-const difficultyToTag = difficulty => {
+const difficultyToTag = (difficulty) => {
   if (!difficulty) return <Tag color="success">简单</Tag>;
   switch (difficulty) {
     case 'Low':
@@ -48,7 +48,7 @@ const difficultyToTag = difficulty => {
   }
 };
 
-const ProblemList = props => {
+const ProblemList = (props) => {
   const {
     problem: { problemList, total },
     dispatch,
@@ -66,8 +66,8 @@ const ProblemList = props => {
   const [selectedTags, setSelectedTags] = useState([]);
 
   useEffect(() => {
-    request('/api/problemtag').then(response => {
-      const tagValue = response.data.map(item => item.name);
+    request('/api/problemtag').then((response) => {
+      const tagValue = response.data.map((item) => item.name);
       setTags(tagValue);
     });
   }, []);
@@ -80,11 +80,11 @@ const ProblemList = props => {
   }, [dispatch, pagination, query]);
 
   // params: (current_pagination, filters, sorter)
-  const tableChangeHandler = current_pagination => {
+  const tableChangeHandler = (current_pagination) => {
     setPagination(current_pagination);
   };
 
-  const handleTitleQuery = value => {
+  const handleTitleQuery = (value) => {
     setQuery({ ...query, title: value });
     setPagination({ current: 1, pageSize: 10 });
   };
@@ -94,7 +94,7 @@ const ProblemList = props => {
     // const
     const nextSelectedTags = checked
       ? [...selectedTags, tag]
-      : selectedTags.filter(t => t !== tag);
+      : selectedTags.filter((t) => t !== tag);
     setSelectedTags(nextSelectedTags);
   };
 
@@ -104,7 +104,7 @@ const ProblemList = props => {
       dataIndex: '',
       key: 'pid',
       width: '5%',
-      render: value => {
+      render: (value) => {
         if (!currentUser) return <></>;
         const { pid } = value;
         const { solved_list, failed_list } = currentUser;
@@ -125,21 +125,21 @@ const ProblemList = props => {
     {
       title: '题名',
       // dataIndex: 'title',
-      render: value => {
+      render: (value) => {
         return <Link to={`/problem/${value.pid}`}>{value.title}</Link>;
       },
       width: '40%',
     },
     {
       title: '题解',
-      render: value => {
+      render: (value) => {
         return value.submit;
       },
       width: '10%',
     },
     {
       title: '通过率',
-      render: value => {
+      render: (value) => {
         const rate = Math.round((value.solve / value.submit) * 100);
         return <>{`${isNaN(rate) ? 0 : rate}%`}</>;
       },
@@ -147,7 +147,7 @@ const ProblemList = props => {
     },
     {
       title: '难度',
-      render: value => {
+      render: (value) => {
         return difficultyToTag(value.difficulty);
       },
       width: '10%',
@@ -165,7 +165,7 @@ const ProblemList = props => {
   return (
     <div>
       <Row>
-        <Col span={15} offset={2}>
+        <Col span={15} offset={1}>
           <Table
             columns={columns}
             rowKey="_id"
@@ -185,7 +185,7 @@ const ProblemList = props => {
                   <Dropdown overlay={select_difficulty_menu}>
                     <a
                       className="ant-dropdown-link"
-                      onClick={e => e.preventDefault()}
+                      onClick={(e) => e.preventDefault()}
                     >
                       难度 <DownOutlined />
                     </a>
@@ -195,18 +195,18 @@ const ProblemList = props => {
             )}
           />
         </Col>
-        <Col span={4} offset={1}>
+        <Col span={4} offset={2}>
           <Row>
             <div className={styles.section_title}>
               <IconFont type="icon-tag-o" />
               <span style={{ marginLeft: '10px' }}>标签分类</span>
               <br />
               <div className={styles.tag_group}>
-                {tags.map(tag => {
+                {tags.map((tag) => {
                   return (
                     <CheckableTag
                       checked={selectedTags.indexOf(tag) > -1}
-                      onChange={checked =>
+                      onChange={(checked) =>
                         handleProblemTagSelected(tag, checked)
                       }
                       key={tag}
