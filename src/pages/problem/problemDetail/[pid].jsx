@@ -163,6 +163,11 @@ const problemDetail = (props) => {
         payload: params,
       });
     }
+    return function cleanModelState() {
+      dispatch({
+        type: 'problemDetail/cleanSubmission',
+      });
+    };
   }, []);
 
   function handleEditorDidMount(_, editor) {
