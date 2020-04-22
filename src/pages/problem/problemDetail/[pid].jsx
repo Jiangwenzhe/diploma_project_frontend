@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-16 16:36:43
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-21 20:56:22
+ * @LastEditTime: 2020-04-22 11:23:00
  */
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './index.less';
@@ -46,6 +46,7 @@ import { BtoMB } from '../../../utils/tool_fuc';
 import ShowCode from '../../../components/showCode/index';
 import { createFromIconfontCN, CaretRightOutlined } from '@ant-design/icons';
 import icon_font_url from '../../../config/iconfont';
+import StatusTag from '../../../components/StatusTag';
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -322,13 +323,7 @@ const problemDetail = (props) => {
     {
       title: 'Result',
       dataIndex: 'result',
-      render: (result) => {
-        if (result === 0) {
-          return <Tag color="#52c41a">{judge_result[result]}</Tag>;
-        } else {
-          return <Tag color="#ff4d4f">{judge_result[result]}</Tag>;
-        }
-      },
+      render: (result) => <StatusTag status={result} />,
     },
     {
       title: 'CPU Time',
