@@ -2,11 +2,16 @@
  * @Author: Wenzhe
  * @Date: 2020-03-20 13:49:05
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-22 09:25:45
+ * @LastEditTime: 2020-04-22 15:11:32
  */
 import { defineConfig } from 'umi';
 
 export default defineConfig({
+  title: 'Node OJ',
+  theme: {
+    // '@primary-color': '#16a085',
+    '@border-radius-base': '4px',
+  },
   history: { type: 'hash' },
   antd: {
     // dark: true,
@@ -25,15 +30,36 @@ export default defineConfig({
       component: '@/layouts/index',
       routes: [
         { path: '/', component: '@/pages/home/index' },
-        { path: '/problem', component: '@/pages/problem/problemList' },
+        {
+          path: '/problem',
+          component: '@/pages/problem/problemList',
+          title: 'Problem | Node OJ',
+        },
         {
           path: '/problem/:pid',
           component: '@/pages/problem/problemDetail/[pid]',
+          title: 'Problem | Node OJ',
         },
-        { path: '/rankList', component: '@/pages/rankList/index' },
-        { path: '/discuss', component: '@/pages/discuss/index' },
-        { path: '/contest', component: '@/pages/contest/index' },
-        { path: '/status', component: '@/pages/status/index' },
+        {
+          path: '/rankList',
+          component: '@/pages/rankList/index',
+          title: 'RankList | Node OJ',
+        },
+        {
+          path: '/discuss',
+          component: '@/pages/discuss/index',
+          title: 'Discuss | Node OJ',
+        },
+        {
+          path: '/contest',
+          component: '@/pages/contest/index',
+          title: 'Contest | Node OJ',
+        },
+        {
+          path: '/status',
+          component: '@/pages/status/index',
+          title: 'Status | Node OJ',
+        },
       ],
     },
   ],
