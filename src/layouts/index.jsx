@@ -2,10 +2,16 @@ import React, { useEffect } from 'react';
 import PageHeader from '../components/header/index.jsx';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
+import { Layout, Typography } from 'antd';
 import { connect } from 'umi';
 import styles from './index.less';
+import Clock from 'react-live-clock';
+import { GithubOutlined } from '@ant-design/icons';
 
 let currHref = '';
+
+const { Content, Footer } = Layout;
+const { Text } = Typography;
 
 const BasicLayout = (props) => {
   const {
@@ -38,12 +44,24 @@ const BasicLayout = (props) => {
   }, [login]);
 
   return (
-    <div className={styles.whole_page}>
+    <Layout className={styles.whole_page}>
       <PageHeader pathname={pathname} user={user} />
-      <div className={styles.container}>
+      <Content className={styles.container}>
         <div className={styles.main}>{children}</div>
-      </div>
-    </div>
+      </Content>
+      <Footer style={{ textAlign: 'center', background: '#f5f7f9' }}>
+        <Text type="secondary" style={{ marginRight: '5px' }}>
+          Server Time:
+        </Text>
+        <Clock format="YYYY-MM-DD HH:mm:ss" ticking={true} />
+        <br />
+        <Text strong>Node OJ</Text>
+        <Text> by </Text>
+        <a href="https://github.com/Jiangwenzhe">
+          姜文哲 <GithubOutlined />.
+        </a>
+      </Footer>
+    </Layout>
   );
 };
 
