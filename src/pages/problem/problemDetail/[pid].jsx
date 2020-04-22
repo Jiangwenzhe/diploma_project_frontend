@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-16 16:36:43
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-22 11:23:00
+ * @LastEditTime: 2020-04-22 19:59:22
  */
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './index.less';
@@ -47,6 +47,7 @@ import ShowCode from '../../../components/showCode/index';
 import { createFromIconfontCN, CaretRightOutlined } from '@ant-design/icons';
 import icon_font_url from '../../../config/iconfont';
 import StatusTag from '../../../components/StatusTag';
+import { useDebounceFn } from '@umijs/hooks';
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -286,8 +287,9 @@ const problemDetail = (props) => {
     setJudgeResultDrawerVisible(false);
   };
 
-  // 提交解答给后台 judge
-  const submit_solution = () => {
+  // 提交解答给后台 judge 使用 useDebounce 函数
+  const { run } = useDebounceFn(() => {
+    console.log('click submit_solution fn');
     const {
       params: { pid },
     } = match;
@@ -313,7 +315,7 @@ const problemDetail = (props) => {
       type: 'problemDetail/createSubmission',
       payload,
     });
-  };
+  }, 500);
 
   const DrawerTableColumns = [
     {
@@ -516,7 +518,7 @@ const problemDetail = (props) => {
               size="large"
               type="primary"
               style={{ padding: '6px 30px', borderRadius: '4px' }}
-              onClick={() => submit_solution()}
+              onClick={run}
               loading={submitting}
             >
               提交
