@@ -12,6 +12,7 @@ const menuData = [
   { route: '/problem', name: 'problem' },
   { route: '/discuss', name: 'discuss' },
   { route: '/contest', name: 'contest' },
+  { route: '/status', name: 'status' },
   { route: '/rankList', name: 'rankList' },
 ];
 

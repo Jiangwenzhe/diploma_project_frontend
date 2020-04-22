@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-03-20 13:49:05
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-17 15:28:16
+ * @LastEditTime: 2020-04-22 09:25:45
  */
 import { defineConfig } from 'umi';
 
@@ -33,6 +33,7 @@ export default defineConfig({
         { path: '/rankList', component: '@/pages/rankList/index' },
         { path: '/discuss', component: '@/pages/discuss/index' },
         { path: '/contest', component: '@/pages/contest/index' },
+        { path: '/status', component: '@/pages/status/index' },
       ],
     },
   ],
