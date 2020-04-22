@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-16 16:36:43
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-21 17:39:22
+ * @LastEditTime: 2020-04-22 20:27:17
  */
 import { getSingleProblemInfo } from '@/service/problem';
 import { createSubmission } from '@/service/submission';
@@ -42,12 +42,20 @@ const Model = {
             submissionInfo: response.data,
           },
         });
+        // 重新获取 problemInfo
+        yield put({
+          type: 'fetchProblemInfo',
+          payload: {
+            pid: payload.pid,
+          },
+        });
       }
     },
-    *cleanSubmission({ payload }, { call, put }) {
+    *cleanProblemDetailModel(_, { put }) {
       yield put({
         type: 'save',
         payload: {
+          problemInfo: {},
           submissionInfo: {},
         },
       });
