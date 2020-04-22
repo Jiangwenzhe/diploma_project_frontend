@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-16 16:36:43
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-22 19:59:22
+ * @LastEditTime: 2020-04-22 20:29:05
  */
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './index.less';
@@ -27,6 +27,7 @@ import { connect } from 'umi';
 import ReactMarkdown from 'react-markdown';
 import { ControlledEditor } from '@monaco-editor/react';
 import { monaco } from '@monaco-editor/react';
+import { useDebounceFn, useMount, useUnmount } from '@umijs/hooks';
 import 'github-markdown-css';
 import {
   custom_editor_theme,
@@ -47,7 +48,6 @@ import ShowCode from '../../../components/showCode/index';
 import { createFromIconfontCN, CaretRightOutlined } from '@ant-design/icons';
 import icon_font_url from '../../../config/iconfont';
 import StatusTag from '../../../components/StatusTag';
-import { useDebounceFn } from '@umijs/hooks';
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -165,7 +165,24 @@ const problemDetail = (props) => {
 
   const editorRef = useRef();
 
-  useEffect(() => {
+  //
+  // useEffect(() => {
+  //   const { params, path } = match;
+  //   if (path === '/problem/:pid') {
+  //     dispatch({
+  //       type: 'problemDetail/fetchProblemInfo',
+  //       payload: params,
+  //     });
+  //   }
+  //   return function cleanModelState() {
+  //     dispatch({
+  //       type: 'problemDetail/cleanSubmission',
+  //     });
+  //   };
+  // }, []);
+
+  // useMount 获取 problemInfo
+  useMount(() => {
     const { params, path } = match;
     if (path === '/problem/:pid') {
       dispatch({
@@ -173,12 +190,15 @@ const problemDetail = (props) => {
         payload: params,
       });
     }
-    return function cleanModelState() {
-      dispatch({
-        type: 'problemDetail/cleanSubmission',
-      });
-    };
-  }, []);
+  });
+
+  // 在组件卸载的时候需要清除 Model 中的 state
+  useUnmount(() => {
+    console.log('unmount');
+    dispatch({
+      type: 'problemDetail/cleanProblemDetailModel',
+    });
+  });
 
   function handleEditorDidMount(_, editor) {
     editorRef.current = editor;
@@ -289,7 +309,6 @@ const problemDetail = (props) => {
 
   // 提交解答给后台 judge 使用 useDebounce 函数
   const { run } = useDebounceFn(() => {
-    console.log('click submit_solution fn');
     const {
       params: { pid },
     } = match;
@@ -315,7 +334,7 @@ const problemDetail = (props) => {
       type: 'problemDetail/createSubmission',
       payload,
     });
-  }, 500);
+  }, 400);
 
   const DrawerTableColumns = [
     {
