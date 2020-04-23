@@ -2,10 +2,10 @@
  * @Author: Wenzhe
  * @Date: 2020-04-16 16:36:43
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-22 20:27:17
+ * @LastEditTime: 2020-04-23 17:22:42
  */
 import { getSingleProblemInfo } from '@/service/problem';
-import { createSubmission } from '@/service/submission';
+import { createSubmission, getSubmission } from '@/service/submission';
 import { message } from 'antd';
 import { history } from 'umi';
 
@@ -14,6 +14,7 @@ const Model = {
   state: {
     problemInfo: {},
     submissionInfo: {},
+    currentSubmissionID: null,
   },
   effects: {
     *fetchProblemInfo({ payload }, { call, put }) {
@@ -39,6 +40,30 @@ const Model = {
         yield put({
           type: 'save',
           payload: {
+            currentSubmissionID: response.data._id,
+          },
+        });
+        return response.data;
+      }
+    },
+    // 轮训请求 ---------
+    *getSubmission({ payload }, { call, put }) {
+      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+      // 设置 delay 500ms
+      yield delay(1000);
+      const clone_payload = JSON.parse(JSON.stringify(payload));
+      const response = yield call(getSubmission, payload);
+      const check = (response) => {
+        if (response.data.result + 4) return true;
+        return false;
+      };
+      console.log(check(response));
+      if (response.code === 0 && response.data && check(response)) {
+        console.log('change submit info');
+        message.success('🎉 判题结果返回成功 🎉');
+        yield put({
+          type: 'save',
+          payload: {
             submissionInfo: response.data,
           },
         });
@@ -50,12 +75,26 @@ const Model = {
           },
         });
       }
+      const needToCheckAgain = !check(response);
+      if (needToCheckAgain) {
+        yield put({ type: 'getSubmission', payload: clone_payload });
+      }
     },
     *cleanProblemDetailModel(_, { put }) {
       yield put({
         type: 'save',
         payload: {
           problemInfo: {},
+          currentSubmissionID: null,
+          submissionInfo: {},
+        },
+      });
+    },
+    *cleanSubmission(_, { put }) {
+      yield put({
+        type: 'save',
+        payload: {
+          currentSubmissionID: null,
           submissionInfo: {},
         },
       });

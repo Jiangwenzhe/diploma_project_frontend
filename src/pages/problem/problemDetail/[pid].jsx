@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-16 16:36:43
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-22 20:29:05
+ * @LastEditTime: 2020-04-23 17:24:24
  */
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './index.less';
@@ -22,6 +22,7 @@ import {
   Empty,
   Alert,
   Table,
+  message,
 } from 'antd';
 import { connect } from 'umi';
 import ReactMarkdown from 'react-markdown';
@@ -113,7 +114,7 @@ const problemDetail = (props) => {
   const {
     match,
     dispatch,
-    problemDetail: { problemInfo, submissionInfo },
+    problemDetail: { problemInfo, submissionInfo, currentSubmissionID },
     user: { currentUser },
     submitting,
   } = props;
@@ -299,6 +300,10 @@ const problemDetail = (props) => {
 
   // 显示判题结果 Drawer
   const showJudgeResultDrawer = () => {
+    if (!(submissionInfo.result + 3)) {
+      message.error('后台还未判题完成，请耐心等待');
+      return;
+    }
     setJudgeResultDrawerVisible(true);
   };
 
@@ -312,6 +317,10 @@ const problemDetail = (props) => {
     const {
       params: { pid },
     } = match;
+    // 首先清空上一次提交的 submissionInfo
+    dispatch({
+      type: 'problemDetail/cleanSubmission',
+    });
     const payload = {
       pid: problemInfo.pid,
       language: judge_language,
@@ -333,8 +342,16 @@ const problemDetail = (props) => {
     dispatch({
       type: 'problemDetail/createSubmission',
       payload,
+    }).then((submission) => {
+      dispatch({
+        type: 'problemDetail/getSubmission',
+        payload: {
+          id: submission._id,
+          pid: submission.pid,
+        },
+      });
     });
-  }, 400);
+  }, 300);
 
   const DrawerTableColumns = [
     {
@@ -487,23 +504,24 @@ const problemDetail = (props) => {
             {/* 如果用户提交过这个题目的话就显示 <Alert /> , 但是如果在题目内部提交的话就不显示*/}
             {currentUser.uid &&
             currentUser.submit_list.includes(problemInfo.pid) &&
-            !submissionInfo._id ? (
+            !currentSubmissionID &&
+            !submitting ? (
               // 这里就在用户提交列表中匹配
               currentUser.solved_list.includes(problemInfo.pid) ? (
                 <Alert
-                  message="Last Submit is Accepted 👍"
+                  message="You have already solved this problem. 👍"
                   type="success"
                   showIcon
                 />
               ) : (
                 <Alert
-                  message="Last Submit is Wrong 💪"
+                  message="You tried before... 💪"
                   type="warning"
                   showIcon
                 />
               )
             ) : // 如果 submission._id 存在的话就显示提交的结果
-            submissionInfo._id ? (
+            currentSubmissionID ? (
               <span>
                 <span style={{ fontSize: '14px', marginRight: '10px' }}>
                   提交状态:{' '}
@@ -514,18 +532,18 @@ const problemDetail = (props) => {
                   onClick={() => showJudgeResultDrawer()}
                   style={{ padding: '0px 13px', borderRadius: '4px' }}
                 >
-                  {submitting ? (
-                    <Badge status="processing" text="submitting..." />
-                  ) : submissionInfo.result === 0 ? (
+                  {submissionInfo.result === 0 ? (
                     <Badge
                       status="success"
                       text={judge_result[submissionInfo.result]}
                     />
-                  ) : (
+                  ) : submissionInfo.result + 3 ? (
                     <Badge
                       status="error"
                       text={judge_result[submissionInfo.result]}
                     />
+                  ) : (
+                    <Badge status="processing" text="Judging..." />
                   )}
                 </Button>
               </span>
@@ -538,7 +556,10 @@ const problemDetail = (props) => {
               type="primary"
               style={{ padding: '6px 30px', borderRadius: '4px' }}
               onClick={run}
-              loading={submitting}
+              loading={
+                submitting ||
+                (currentSubmissionID && !(submissionInfo.result + 3))
+              }
             >
               提交
             </Button>
@@ -693,4 +714,5 @@ export default connect(({ problem, problemDetail, loading, user }) => ({
   user,
   fetching: loading.effects['problemDetail/fetchProblemInfo'],
   submitting: loading.effects['problemDetail/createSubmission'],
+  delay_submitting: loading.effects['problemDetail/getSubmission'],
 }))(problemDetail);
