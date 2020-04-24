@@ -47,16 +47,16 @@ const StatusList = (props) => {
       dataIndex: 'pid',
     },
     {
-      title: 'Username',
+      title: '提交用户',
       dataIndex: 'username',
     },
     {
-      title: 'Status',
+      title: '状态',
       dataIndex: 'result',
       render: (result) => <StatusTag status={result} />,
     },
     {
-      title: 'CPU Time',
+      title: 'CPU 用时',
       // dataIndex: 'cpu_time_cost',
       render: (record) => {
         if (record.result === -2) return '/';
@@ -64,7 +64,7 @@ const StatusList = (props) => {
       },
     },
     {
-      title: 'Real Time',
+      title: '执行用时',
       // dataIndex: 'real_time__cost',
       render: (record) => {
         if (record.result === -2) return '/';
@@ -72,7 +72,7 @@ const StatusList = (props) => {
       },
     },
     {
-      title: 'Memory',
+      title: '内存消耗',
       // dataIndex: 'memory_cost',
       render: (record) => {
         if (record.result === -2) return '/';
@@ -80,11 +80,11 @@ const StatusList = (props) => {
       },
     },
     {
-      title: 'Language',
+      title: '执行语言',
       dataIndex: 'language',
     },
     {
-      title: 'Submit Time',
+      title: '提交时间',
       dataIndex: 'create_at',
       render: (time_stamp) => moment(time_stamp).format('YYYY-MM-DD HH:mm:ss'),
     },
