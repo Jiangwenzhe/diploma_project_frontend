@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-16 16:36:43
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-24 09:32:27
+ * @LastEditTime: 2020-04-24 10:24:51
  */
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './index.less';
@@ -359,24 +359,29 @@ const problemDetail = (props) => {
       render: (value) => value.test_case,
     },
     {
-      title: 'Result',
+      title: '测试用例结果',
       dataIndex: 'result',
       render: (result) => <StatusTag status={result} />,
     },
     {
-      title: 'CPU Time',
+      title: 'CPU 用时',
       dataIndex: 'cpu_time',
     },
     {
-      title: 'Real Time',
+      title: '执行用时',
       dataIndex: 'real_time',
     },
     {
-      title: 'Singal',
+      title: '内存消耗',
+      dataIndex: 'memory',
+      render: (memory) => `${BtoMB(memory)} mb`,
+    },
+    {
+      title: '信号|Singal',
       dataIndex: 'signal',
     },
     {
-      title: 'Error',
+      title: '错误',
       dataIndex: 'error',
     },
   ];
@@ -682,7 +687,7 @@ const problemDetail = (props) => {
                   <Table
                     columns={DrawerTableColumns}
                     dataSource={
-                      submissionInfo
+                      submissionInfo.info
                         ? submissionInfo.info.judge_result_info
                         : []
                     }
