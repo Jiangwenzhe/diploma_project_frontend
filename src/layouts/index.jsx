@@ -49,7 +49,7 @@ const BasicLayout = (props) => {
       <Content className={styles.container}>
         <div className={styles.main}>{children}</div>
       </Content>
-      <Footer style={{ textAlign: 'center', background: '#f5f7f9' }}>
+      <Footer className={styles.footer}>
         <Text type="secondary" style={{ marginRight: '5px' }}>
           Server Time:
         </Text>
