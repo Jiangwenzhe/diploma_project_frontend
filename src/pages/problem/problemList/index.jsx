@@ -154,8 +154,8 @@ const ProblemList = (props) => {
 
   return (
     <div>
-      <Row>
-        <Col span={15} offset={1}>
+      <Row style={{ margin: '0 auot' }}>
+        <Col span={16} style={{ marginLeft: '20px' }}>
           <Table
             columns={columns}
             rowKey="_id"
@@ -185,7 +185,7 @@ const ProblemList = (props) => {
             )}
           />
         </Col>
-        <Col span={4} offset={2}>
+        <Col span={5} offset={1}>
           <Row>
             <div className={styles.section_title}>
               <IconFont type="icon-tag-o" />
