@@ -38,6 +38,9 @@ const StatusList = (props) => {
     {
       title: 'ID',
       dataIndex: '_id',
+      render: (id) => {
+        return <Link to={`/status/${id}`}>{id}</Link>;
+      },
     },
     {
       title: 'PID',
