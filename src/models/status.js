@@ -2,15 +2,16 @@
  * @Author: Wenzhe
  * @Date: 2020-04-22 09:41:30
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-22 10:10:34
+ * @LastEditTime: 2020-04-24 09:55:27
  */
-import { getStatusList } from '@/service/status';
+import { getStatusList, fetchSubmissionDetail } from '@/service/status';
 
 const Model = {
   namespace: 'status',
   state: {
     statusList: [],
     total: 0,
+    submissionDetail: {},
   },
   effects: {
     *fetchStatusList({ payload }, { call, put }) {
@@ -22,6 +23,25 @@ const Model = {
             ? response.data.list
             : [],
           total: response.data.total,
+        },
+      });
+    },
+    *fetchSubmissionDetail({ payload }, { call, put }) {
+      const response = yield call(fetchSubmissionDetail, payload);
+      if (response.code === 0 && response.data) {
+        yield put({
+          type: 'save',
+          payload: {
+            submissionDetail: response.data,
+          },
+        });
+      }
+    },
+    *cleanSubmissionDetail(_, { put }) {
+      yield put({
+        type: 'save',
+        payload: {
+          submissionDetail: {},
         },
       });
     },
