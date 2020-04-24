@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-16 16:36:43
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-23 17:22:42
+ * @LastEditTime: 2020-04-24 10:16:03
  */
 import { getSingleProblemInfo } from '@/service/problem';
 import { createSubmission, getSubmission } from '@/service/submission';
@@ -60,7 +60,7 @@ const Model = {
       console.log(check(response));
       if (response.code === 0 && response.data && check(response)) {
         console.log('change submit info');
-        message.success('🎉 判题结果返回成功 🎉');
+        message.success('🎉 判题结果返回成功 🎉', 1);
         yield put({
           type: 'save',
           payload: {
