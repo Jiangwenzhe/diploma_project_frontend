@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-03-20 13:49:05
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-24 09:35:55
+ * @LastEditTime: 2020-04-25 16:40:08
  */
 import { defineConfig } from 'umi';
 
@@ -64,6 +64,12 @@ export default defineConfig({
           path: '/status/:sid',
           component: '@/pages/status/statusDetail/[sid]',
           title: 'Status | Node OJ',
+        },
+        // user ====================
+        {
+          path: '/user/:uid',
+          component: '@/pages/user/userDetail/[uid]',
+          title: 'User | Node OJ',
         },
       ],
     },

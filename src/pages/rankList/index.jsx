@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Row } from 'antd';
 import { connect, Link } from 'umi';
-import styles from './index.less';
-import StatusTag from '../../components/StatusTag';
-import moment from 'moment';
-import { BtoMB } from '../../utils/tool_fuc';
 
 const RankList = (props) => {
   const {
@@ -33,13 +29,16 @@ const RankList = (props) => {
   const columns = [
     {
       title: '排名',
-      render: (text, record, index) => `${index + 1}`,
       width: '5%',
+      render: (text, record, index) => `${index + 1}`,
     },
     {
       title: '用户名称',
       dataIndex: 'name',
       width: '10%',
+      render: (text, record, index) => (
+        <Link to={`/user/${record.uid}`}>{text}</Link>
+      ),
     },
     {
       title: 'UID',
