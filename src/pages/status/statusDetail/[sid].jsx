@@ -1,8 +1,7 @@
 import React from 'react';
-import style from './index.less';
-import { connect } from 'umi';
+import { connect, history } from 'umi';
 import { useMount, useUnmount } from '@umijs/hooks';
-import { Table, Row, Col, Alert, Divider } from 'antd';
+import { Table, Alert, Divider, PageHeader } from 'antd';
 import ShowCode from '../../../components/showCode/index';
 import { BtoMB } from '../../../utils/tool_fuc';
 import { judge_result } from '../../../config/judge_result';
@@ -66,56 +65,82 @@ const StatusDetail = (props) => {
 
   return (
     <div>
-      <h2>提交记录</h2>
-      <Alert
-        message={judge_result[submissionDetail.result]}
-        description={
-          <div style={{ fontSize: '12px' }}>
-            <span>
-              CPU 用时(总):{' '}
-              {submissionDetail.status_info
-                ? submissionDetail.status_info.cpu_time_cost
-                : 0}
-              ms
-            </span>
-            <span style={{ marginLeft: '15px' }}>
-              执行用时(总):{' '}
-              {submissionDetail.status_info
-                ? submissionDetail.status_info.real_time__cost
-                : 0}
-              ms
-            </span>
-            <span style={{ marginLeft: '15px' }}>
-              内存消耗(总):{' '}
-              {BtoMB(
-                submissionDetail.status_info
-                  ? submissionDetail.status_info.memory_cost
-                  : 0,
-              )}
-              MB
-            </span>
-            <span style={{ marginLeft: '15px' }}>
-              执行语言 : {submissionDetail.language}
-            </span>
-          </div>
-        }
-        type={submissionDetail.result === 0 ? 'success' : 'error'}
-        showIcon
+      <PageHeader
+        className="site-page-header"
+        onBack={() => history.goBack()}
+        title="提交记录"
+        subTitle={`sid: ${match.params.sid}`}
       />
-      <Divider />
-      <Table
-        columns={DrawerTableColumns}
-        dataSource={
-          submissionDetail.info ? submissionDetail.info.judge_result_info : []
-        }
-        rowKey="output_md5"
-        size="small"
-      />
-      <Divider />
-      <ShowCode
-        language={submissionDetail.language}
-        code={submissionDetail.code}
-      />
+      <div style={{ padding: '16px 30px' }}>
+        {submissionDetail.result === -2 ? (
+          <Alert
+            message={judge_result[submissionDetail.result]}
+            description={
+              <div style={{ whiteSpace: 'pre-wrap' }}>
+                {submissionDetail.status_info.error_info}
+              </div>
+            }
+            type={submissionDetail.result === 0 ? 'success' : 'error'}
+            showIcon
+          />
+        ) : (
+          <Alert
+            message={judge_result[submissionDetail.result]}
+            description={
+              <div style={{ fontSize: '12px' }}>
+                <span>
+                  CPU 用时(总):{' '}
+                  {submissionDetail.status_info
+                    ? submissionDetail.status_info.cpu_time_cost
+                    : 0}
+                  ms
+                </span>
+                <span style={{ marginLeft: '15px' }}>
+                  执行用时(总):{' '}
+                  {submissionDetail.status_info
+                    ? submissionDetail.status_info.real_time__cost
+                    : 0}
+                  ms
+                </span>
+                <span style={{ marginLeft: '15px' }}>
+                  内存消耗(总):{' '}
+                  {BtoMB(
+                    submissionDetail.status_info
+                      ? submissionDetail.status_info.memory_cost
+                      : 0,
+                  )}
+                  MB
+                </span>
+                <span style={{ marginLeft: '15px' }}>
+                  执行语言 : {submissionDetail.language}
+                </span>
+              </div>
+            }
+            type={submissionDetail.result === 0 ? 'success' : 'error'}
+            showIcon
+          />
+        )}
+        <Divider />
+        {submissionDetail.result !== -2 && (
+          <>
+            <Table
+              columns={DrawerTableColumns}
+              dataSource={
+                submissionDetail.info
+                  ? submissionDetail.info.judge_result_info
+                  : []
+              }
+              rowKey="output_md5"
+              size="small"
+            />
+            <Divider />
+          </>
+        )}
+        <ShowCode
+          language={submissionDetail.language}
+          code={submissionDetail.code}
+        />
+      </div>
     </div>
   );
 };
