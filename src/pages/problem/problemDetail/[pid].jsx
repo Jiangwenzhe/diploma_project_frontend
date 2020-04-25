@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-16 16:36:43
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-24 10:24:51
+ * @LastEditTime: 2020-04-25 13:01:21
  */
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './index.less';
@@ -23,8 +23,9 @@ import {
   Alert,
   Table,
   message,
+  PageHeader,
 } from 'antd';
-import { connect } from 'umi';
+import { connect, history } from 'umi';
 import ReactMarkdown from 'react-markdown';
 import { ControlledEditor } from '@monaco-editor/react';
 import { monaco } from '@monaco-editor/react';
@@ -388,6 +389,12 @@ const problemDetail = (props) => {
 
   return (
     <>
+      {/* <PageHeader
+        className={styles.problem_header}
+        onBack={() => history.goBack()}
+        title=""
+        subTitle={`pid: ${match.params.pid}`}
+      /> */}
       <Row gutter={16}>
         <Col span={8}>
           <Tabs onChange={handleLeftTabChange} type="card">
