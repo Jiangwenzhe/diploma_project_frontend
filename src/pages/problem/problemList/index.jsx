@@ -12,6 +12,7 @@ import {
 } from 'antd';
 import styles from './index.less';
 import request from '@/utils/request';
+import UserProgressChart from '../../../components/UserProgressChart';
 import { connect, Link } from 'umi';
 import { createFromIconfontCN, DownOutlined } from '@ant-design/icons';
 import icon_font_url from '../../../config/iconfont';
@@ -215,7 +216,10 @@ const ProblemList = (props) => {
                 <IconFont type="icon-schedule" />
                 <span style={{ marginLeft: '10px' }}>我的进度</span>
               </div>
-              会有一个饼图放在这里
+              <div className={styles.user_progress_chart}>
+                <UserProgressChart />
+                <Divider />
+              </div>
             </div>
           </Row>
         </Col>
