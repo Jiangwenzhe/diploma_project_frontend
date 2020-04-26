@@ -2,9 +2,9 @@
  * @Author: Wenzhe
  * @Date: 2020-04-25 16:25:16
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-26 12:42:28
+ * @LastEditTime: 2020-04-26 14:25:08
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect, Link } from 'umi';
 import { useMount, useUnmount } from '@umijs/hooks';
 import {
@@ -32,9 +32,11 @@ const UserDetail = (props) => {
     match,
     dispatch,
     userInfo: { userInfo },
+    // 当前用户 / 用来开启编辑界面
+    user: { currentUser },
   } = props;
 
-  useMount(() => {
+  useEffect(() => {
     const { uid } = match.params;
     dispatch({
       type: 'userInfo/fetchUserInfo',
@@ -42,7 +44,7 @@ const UserDetail = (props) => {
         uid,
       },
     });
-  });
+  }, [match, dispatch]);
 
   useUnmount(() => {
     dispatch({
@@ -171,15 +173,18 @@ const UserDetail = (props) => {
         <TabPane tab="用户分析" key="2">
           Content of Tab 3
         </TabPane>
-        <TabPane tab="编辑" key="3">
-          Content of Tab 2
-        </TabPane>
+        {currentUser.uid === userInfo.uid && (
+          <TabPane tab="编辑" key="3">
+            Content of Tab 2
+          </TabPane>
+        )}
       </Tabs>
     </div>
   );
 };
 
-export default connect(({ userInfo, loading }) => ({
+export default connect(({ userInfo, loading, user }) => ({
   userInfo,
+  user,
   fetchUserInfoLoading: loading.effects['userInfo/fetchUserInfo'],
 }))(UserDetail);
