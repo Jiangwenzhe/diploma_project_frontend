@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { Menu, Row, Col, Avatar, Typography, Button, Layout } from 'antd';
 import styles from './index.less';
-import { Link, connect } from 'umi';
+import { Link, connect, history } from 'umi';
 import LoginModal from '../loginModal';
 
 const { Item, SubMenu } = Menu;
 const { Text } = Typography;
-const { Header } = Layout;
 
 const menuData = [
   { route: '/', name: 'Home' },
@@ -85,9 +84,12 @@ const PageHeader = (props) => {
                     </>
                   }
                 >
-                  <Menu.Item key="setting:1">Option 1</Menu.Item>
-                  <Menu.Item key="setting:2">Option 2</Menu.Item>
-                  <Menu.Item key="setting:3">Option 3</Menu.Item>
+                  <Menu.Item
+                    key="user_profile"
+                    onClick={() => history.push(`/user/${currentUser.uid}`)}
+                  >
+                    个人信息
+                  </Menu.Item>
                   <Menu.Item key="logout" onClick={() => logout()}>
                     退出登录
                   </Menu.Item>
