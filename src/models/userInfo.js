@@ -2,9 +2,10 @@
  * @Author: Wenzhe
  * @Date: 2020-04-25 16:36:55
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-25 16:44:48
+ * @LastEditTime: 2020-04-27 09:49:24
  */
-import { fetchUserInfo } from '@/service/userInfo';
+import { fetchUserInfo, updateUserInfo } from '@/service/userInfo';
+import { message } from 'antd';
 
 const Model = {
   namespace: 'userInfo',
@@ -19,6 +20,19 @@ const Model = {
           type: 'save',
           payload: {
             userInfo: response.data,
+          },
+        });
+      }
+    },
+    *updateUserInfo({ payload }, { call, put }) {
+      const response = yield call(updateUserInfo, payload);
+      if (response.code === 0 && response.data) {
+        console.log(response);
+        message.success('用户信息更新成功~');
+        yield put({
+          type: 'fetchUserInfo',
+          payload: {
+            uid: payload.uid,
           },
         });
       }
