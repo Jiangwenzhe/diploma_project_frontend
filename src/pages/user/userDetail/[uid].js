@@ -2,11 +2,11 @@
  * @Author: Wenzhe
  * @Date: 2020-04-25 16:25:16
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-26 14:25:08
+ * @LastEditTime: 2020-04-27 09:59:27
  */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect, Link } from 'umi';
-import { useMount, useUnmount } from '@umijs/hooks';
+import { useUnmount } from '@umijs/hooks';
 import {
   Divider,
   Tabs,
@@ -16,6 +16,10 @@ import {
   Typography,
   Badge,
   Statistic,
+  Form,
+  Input,
+  Button,
+  Modal,
 } from 'antd';
 import { createFromIconfontCN } from '@ant-design/icons';
 import icon_font_url from '../../../config/iconfont';
@@ -36,6 +40,19 @@ const UserDetail = (props) => {
     user: { currentUser },
   } = props;
 
+  const [resetPassModalVisible, setResetPassModalVisible] = useState(false);
+
+  const showResetPassModal = () => {
+    setResetPassModalVisible(true);
+  };
+
+  const hideResetPassModal = () => {
+    setResetPassModalVisible(false);
+  };
+
+  // 使用 useForm 方法
+  const [form, resetPassForm] = Form.useForm();
+
   useEffect(() => {
     const { uid } = match.params;
     dispatch({
@@ -51,6 +68,63 @@ const UserDetail = (props) => {
       type: 'status/cleanUserInfo',
     });
   });
+
+  const layout = {
+    labelCol: { span: 8 },
+    wrapperCol: { span: 16 },
+  };
+  const tailLayout = {
+    wrapperCol: { offset: 8, span: 16 },
+  };
+
+  const resetpass_layout = {
+    labelCol: { span: 5 },
+    wrapperCol: { span: 17 },
+  };
+
+  const resetpass_tailLayout = {
+    wrapperCol: { offset: 5, span: 16 },
+  };
+
+  useEffect(() => {
+    if (currentUser.uid === userInfo.uid) {
+      form.setFieldsValue({
+        name: userInfo.name,
+        motto: userInfo.motto ? userInfo.motto : '',
+        mail: userInfo.mail ? userInfo.mail : '',
+        school: userInfo.school ? userInfo.school : '',
+        company: userInfo.company ? userInfo.company : '',
+        avatar: userInfo.avatar ? userInfo.avatar : '',
+      });
+    }
+  }, [userInfo, form]);
+
+  const onUpdateFormFinish = (values) => {
+    console.log('Success:', values);
+    const payload = {
+      data: values,
+      id: userInfo._id,
+      uid: userInfo.uid,
+    };
+    dispatch({
+      type: 'userInfo/updateUserInfo',
+      payload,
+    });
+  };
+
+  const onResetPassFormFinish = (values) => {
+    console.log('Success:', values);
+    const payload = {
+      data: { password: values.password },
+      id: userInfo._id,
+      uid: userInfo.uid,
+    };
+    console.log('reset new pass', payload);
+    // dispatch({
+    //   type: 'userInfo/updateUserInfo',
+    //   payload,
+    // });
+  };
 
   return (
     <div>
@@ -76,28 +150,32 @@ const UserDetail = (props) => {
               <Text ellipsis={true}>
                 <IconFont type="icon-jilika" />
                 <span style={{ marginLeft: '6px' }}>
-                  Motto: {userInfo.motto}
+                  <Text type="secondary">Motto: </Text>
+                  {userInfo.motto}
                 </span>
               </Text>
               <br />
               <Text ellipsis={true}>
                 <IconFont type="icon-email" />
                 <span style={{ marginLeft: '6px' }}>
-                  Mail: {userInfo.mail ? userInfo.mail : 'null'}
+                  <Text type="secondary">Mail: </Text>
+                  {userInfo.mail ? userInfo.mail : 'null'}
                 </span>
               </Text>
               <br />
               <Text ellipsis={true}>
                 <IconFont type="icon-school" />
                 <span style={{ marginLeft: '6px' }}>
-                  School: {userInfo.school ? userInfo.school : 'null'}
+                  <Text type="secondary">School: </Text>
+                  {userInfo.school ? userInfo.school : 'null'}
                 </span>
               </Text>
               <br />
               <Text ellipsis={true}>
                 <IconFont type="icon-company" />
                 <span style={{ marginLeft: '6px' }}>
-                  Company: {userInfo.company ? userInfo.company : 'null'}
+                  <Text type="secondary">Company: </Text>{' '}
+                  {userInfo.company ? userInfo.company : 'null'}
                 </span>
               </Text>
               <Divider />
@@ -174,8 +252,137 @@ const UserDetail = (props) => {
           Content of Tab 3
         </TabPane>
         {currentUser.uid === userInfo.uid && (
-          <TabPane tab="编辑" key="3">
-            Content of Tab 2
+          <TabPane tab="编辑" key="3" forceRender>
+            <Row>
+              <Col span={12}>
+                <Form
+                  form={form}
+                  {...layout}
+                  name="basic"
+                  // initialValues={{ remember: true }}
+                  onFinish={onUpdateFormFinish}
+                >
+                  <Form.Item
+                    label="用户名"
+                    name="name"
+                    rules={[
+                      {
+                        required: true,
+                        message: '请输入你的用户名',
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+
+                  <Form.Item label="签名" name="motto">
+                    <Input />
+                  </Form.Item>
+
+                  <Form.Item
+                    label="邮箱"
+                    name="mail"
+                    rules={[
+                      { type: 'email', message: '请输入正确的电子邮箱格式' },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+
+                  <Form.Item label="学校名" name="school">
+                    <Input />
+                  </Form.Item>
+
+                  <Form.Item label="公司名" name="company">
+                    <Input />
+                  </Form.Item>
+
+                  <Form.Item {...tailLayout}>
+                    <Button type="primary" htmlType="submit">
+                      更新
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </Col>
+              <Col offset={1}>
+                <Button onClick={() => showResetPassModal()}>重置密码</Button>
+                <Modal
+                  title="重置密码"
+                  visible={resetPassModalVisible}
+                  onCancel={hideResetPassModal}
+                  footer={null}
+                >
+                  <Form
+                    form={resetPassForm}
+                    {...resetpass_layout}
+                    name="resetPass"
+                    // initialValues={{ remember: true }}
+                    onFinish={onResetPassFormFinish}
+                  >
+                    <Form.Item
+                      label="老密码"
+                      name="old_password"
+                      rules={[
+                        {
+                          required: true,
+                          message: 'Please input your password!',
+                        },
+                        ({ getFieldValue }) => ({
+                          validator(rule, value) {
+                            if (!value || value === userInfo.password) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject('老密码错误');
+                          },
+                        }),
+                      ]}
+                    >
+                      <Input.Password />
+                    </Form.Item>
+                    <Form.Item
+                      label="新密码"
+                      name="new_password"
+                      rules={[
+                        {
+                          required: true,
+                          message: 'Please input your password!',
+                        },
+                      ]}
+                    >
+                      <Input.Password />
+                    </Form.Item>
+                    <Form.Item
+                      label="重复密码"
+                      name="password"
+                      rules={[
+                        {
+                          required: true,
+                          message: 'Please input your password!',
+                        },
+                        ({ getFieldValue }) => ({
+                          validator(rule, value) {
+                            if (
+                              !value ||
+                              getFieldValue('new_password') === value
+                            ) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject('你与之前输入的密码不符！');
+                          },
+                        }),
+                      ]}
+                    >
+                      <Input.Password />
+                    </Form.Item>
+                    <Form.Item {...resetpass_tailLayout}>
+                      <Button type="primary" htmlType="submit">
+                        重置密码
+                      </Button>
+                    </Form.Item>
+                  </Form>
+                </Modal>
+              </Col>
+            </Row>
           </TabPane>
         )}
       </Tabs>
