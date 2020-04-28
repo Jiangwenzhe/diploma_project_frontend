@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-24 16:15:49
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-24 16:20:00
+ * @LastEditTime: 2020-04-27 10:53:16
  */
 import { getRankList } from '@/service/ranklist';
 
@@ -29,7 +29,7 @@ const Model = {
       yield put({
         type: 'save',
         payload: {
-          ranklistInfo: {},
+          ranklistInfo: [],
         },
       });
     },
