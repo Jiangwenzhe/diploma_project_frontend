@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-03-20 13:49:05
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-25 16:40:08
+ * @LastEditTime: 2020-04-30 23:05:22
  */
 import { defineConfig } from 'umi';
 
@@ -48,6 +48,11 @@ export default defineConfig({
         {
           path: '/discuss',
           component: '@/pages/discuss/index',
+          title: 'Discuss | Node OJ',
+        },
+        {
+          path: '/discuss/:did',
+          component: '@/pages/discuss/discussDetail/[did]',
           title: 'Discuss | Node OJ',
         },
         {
