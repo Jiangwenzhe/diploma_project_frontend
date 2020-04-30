@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 12:57:33
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-30 15:08:20
+ * @LastEditTime: 2020-04-30 23:09:45
  */
 import React from 'react';
 import { Row, Avatar, Typography, Skeleton } from 'antd';
@@ -19,15 +19,33 @@ const isDiscussOrArticle = (type) => {
 
 const DiscussItem = (props) => {
   const { discussInfo, clickCategoryFnc } = props;
-  const { authorInfo, title, category, comments, type, detail } = discussInfo;
+  const {
+    authorInfo,
+    title,
+    category,
+    comments,
+    type,
+    detail,
+    _id,
+  } = discussInfo;
 
   return (
     <div className={styles.discuss}>
       {title ? (
         <>
           <Row align="middle" style={{ height: '24px' }}>
-            <Avatar src={authorInfo.avatar} size={22} />
-            <span className={styles.discuss_title}>{title}</span>
+            <Avatar
+              src={authorInfo.avatar}
+              size={22}
+              onClick={() => history.push(`/user/${authorInfo.uid}`)}
+              style={{ cursor: 'pointer' }}
+            />
+            <span
+              className={styles.discuss_title}
+              onClick={() => history.push(`/discuss/${_id}`)}
+            >
+              {title}
+            </span>
           </Row>
           <Row className={styles.info} align="middle">
             <span
@@ -47,7 +65,10 @@ const DiscussItem = (props) => {
             {isDiscussOrArticle(type)}
             <div className={styles.dot} />0 阅读
           </Row>
-          <Row className={styles.summary}>
+          <Row
+            className={styles.summary}
+            onClick={() => history.push(`/discuss/${_id}`)}
+          >
             <Paragraph
               className={styles.summary_detail}
               ellipsis={{ rows: 3, expandable: true }}
