@@ -2,13 +2,14 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 10:51:45
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-30 14:51:50
+ * @LastEditTime: 2020-04-30 23:04:16
  */
 
 import {
   getDiscussList,
   getDiscussTags,
   getMyDiscussInfo,
+  getDiscussDetail,
 } from '@/service/discuss';
 
 const Model = {
@@ -17,6 +18,7 @@ const Model = {
     discussList: [],
     discussTags: [],
     total: 0,
+    discussDetail: {},
   },
   effects: {
     *fetchDiscussList({ payload }, { call, put }) {
@@ -53,11 +55,28 @@ const Model = {
         },
       });
     },
+    *fetchDiscussDetail({ payload }, { call, put }) {
+      const response = yield call(getDiscussDetail, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          discussDetail: response.data,
+        },
+      });
+    },
     *cleanDiscussListInfo(_, { put }) {
       yield put({
         type: 'save',
         payload: {
           discussList: [],
+        },
+      });
+    },
+    *cleanDiscussDetail(_, { put }) {
+      yield put({
+        type: 'save',
+        payload: {
+          discussDetail: {},
         },
       });
     },
