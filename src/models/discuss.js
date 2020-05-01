@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 10:51:45
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-01 17:21:53
+ * @LastEditTime: 2020-05-01 22:29:43
  */
 
 import {
@@ -11,6 +11,7 @@ import {
   getMyDiscussInfo,
   getDiscussDetail,
   createDiscuss,
+  joinDuscuss,
 } from '@/service/discuss';
 
 import { message } from 'antd';
@@ -76,6 +77,17 @@ const Model = {
           }已创建成功`,
         );
         return 'create_success';
+      }
+    },
+    *joinDuscuss({ payload }, { call, put }) {
+      const response = yield call(joinDuscuss, payload);
+      if (response.data && response.data === '添加讨论成功') {
+        message.success('添加讨论成功');
+        yield put({
+          type: 'fetchDiscussDetail',
+          payload: { did: payload.did },
+        });
+        return 'success';
       }
     },
     *cleanDiscussListInfo(_, { put }) {
