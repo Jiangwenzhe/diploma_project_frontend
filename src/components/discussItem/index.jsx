@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 12:57:33
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-01 09:18:42
+ * @LastEditTime: 2020-05-01 22:41:44
  */
 import React from 'react';
 import { Row, Avatar, Typography, Skeleton } from 'antd';
@@ -28,6 +28,7 @@ const DiscussItem = (props) => {
     detail,
     _id,
     access_number,
+    discussList,
   } = discussInfo;
 
   const pushDiscuss = () => {
@@ -86,7 +87,11 @@ const DiscussItem = (props) => {
           </Row>
           <Row className={styles.action} align="middle">
             <CommentOutlined />
-            <span className={styles.comment}>{comments.length} 条评论</span>
+            <span className={styles.comment}>
+              {type === 'discuss'
+                ? `${discussList.length} 条讨论`
+                : `${comments.length} 条评论`}
+            </span>
           </Row>
         </>
       ) : (
