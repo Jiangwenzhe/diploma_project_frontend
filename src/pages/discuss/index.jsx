@@ -17,7 +17,8 @@ import {
   createFromIconfontCN,
   RightOutlined,
 } from '@ant-design/icons';
-import { connect, Link } from 'umi';
+import { connect } from 'umi';
+import DiscussForm from './discussForm/index';
 import { v4 as uuidv4 } from 'uuid';
 import DiscussItem from '../../components/discussItem';
 import icon_font_url from '../../config/iconfont';
@@ -58,6 +59,8 @@ const Discuss = (props) => {
   const [selectedTags, setSelectedTags] = useState([]);
   const [isMy, setIsMy] = useState(false);
   const [myPageHeaderTitle, setMyPageHeaderTitle] = useState('');
+  const [discussFormVisible, setDiscussFormVisible] = useState(false);
+  const [discussFormType, setDiscussFormType] = useState('');
 
   // '', 'interview/面试', 'algorithm/数据结构与算法', 'question/题目讨论'， 'work/工作', 'news/新闻', 'feedback/反馈'
   const categories = [
@@ -103,6 +106,14 @@ const Discuss = (props) => {
       tag: currentTag,
     });
   }, [selectCategory, discussType, selectedTags]);
+
+  // refetch discusslist
+  const refetchDiscussList = () => {
+    dispatch({
+      type: 'discuss/fetchDiscussList',
+      payload: { pagination, query },
+    });
+  };
 
   // 更改 pagination 中的 current 当前页码
   const paginationChangeHandler = (current) => {
@@ -199,12 +210,24 @@ const Discuss = (props) => {
     });
   };
 
+  // 从 我的文章 ｜ 我的讨论 ｜ 我的草稿 返回分页获取 discussList
   const cancelMy = () => {
     setIsMy(false);
     dispatch({
       type: 'discuss/fetchDiscussList',
       payload: { pagination, query },
     });
+  };
+
+  // 显示 DiscussForm
+  const showDiscussForm = (type) => {
+    setDiscussFormVisible(true);
+    setDiscussFormType(type);
+  };
+
+  // 隐藏 DiscussForm
+  const hideDiscussForm = () => {
+    setDiscussFormVisible(false);
   };
 
   return (
@@ -305,14 +328,18 @@ const Discuss = (props) => {
             <Divider style={{ margin: '15px 0' }} />
             <Row style={{ margin: '0 15px' }}>
               <Col>
-                <Button type="primary" block>
+                <Button
+                  type="primary"
+                  block
+                  onClick={() => showDiscussForm('article')}
+                >
                   <PlusOutlined />
                   编写文章
                 </Button>
               </Col>
               <div style={{ width: '10px' }} />
               <Col>
-                <Button block>
+                <Button block onClick={() => showDiscussForm('discuss')}>
                   <PlusOutlined />
                   发起讨论
                 </Button>
@@ -367,6 +394,13 @@ const Discuss = (props) => {
           )}
         </div>
       </Row>
+      <DiscussForm
+        discussFormVisible={discussFormVisible}
+        type={discussFormType}
+        handleHideDiscussForm={hideDiscussForm}
+        discussTags={discussTags}
+        refetchDiscussList={refetchDiscussList}
+      />
     </div>
   );
 };
