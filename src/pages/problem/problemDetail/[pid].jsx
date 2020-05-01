@@ -2,9 +2,9 @@
  * @Author: Wenzhe
  * @Date: 2020-04-16 16:36:43
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-25 13:01:21
+ * @LastEditTime: 2020-05-01 11:53:50
  */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import styles from './index.less';
 import {
   Row,
@@ -23,9 +23,8 @@ import {
   Alert,
   Table,
   message,
-  PageHeader,
 } from 'antd';
-import { connect, history } from 'umi';
+import { connect } from 'umi';
 import ReactMarkdown from 'react-markdown';
 import { ControlledEditor } from '@monaco-editor/react';
 import { monaco } from '@monaco-editor/react';
