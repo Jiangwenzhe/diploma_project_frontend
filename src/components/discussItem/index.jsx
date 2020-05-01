@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 12:57:33
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-30 23:09:45
+ * @LastEditTime: 2020-05-01 09:18:42
  */
 import React from 'react';
 import { Row, Avatar, Typography, Skeleton } from 'antd';
@@ -27,7 +27,17 @@ const DiscussItem = (props) => {
     type,
     detail,
     _id,
+    access_number,
   } = discussInfo;
+
+  const pushDiscuss = () => {
+    if (type === 'article') {
+      return history.push(`/discuss/articleDetail/${_id}`);
+    }
+    if (type === 'discuss') {
+      return history.push(`/discuss/discussDetail/${_id}`);
+    }
+  };
 
   return (
     <div className={styles.discuss}>
@@ -42,7 +52,7 @@ const DiscussItem = (props) => {
             />
             <span
               className={styles.discuss_title}
-              onClick={() => history.push(`/discuss/${_id}`)}
+              onClick={() => pushDiscuss()}
             >
               {title}
             </span>
@@ -63,12 +73,10 @@ const DiscussItem = (props) => {
             </span>
             &nbsp;中
             {isDiscussOrArticle(type)}
-            <div className={styles.dot} />0 阅读
+            <div className={styles.dot} />
+            {access_number} 阅读
           </Row>
-          <Row
-            className={styles.summary}
-            onClick={() => history.push(`/discuss/${_id}`)}
-          >
+          <Row className={styles.summary} onClick={() => pushDiscuss()}>
             <Paragraph
               className={styles.summary_detail}
               ellipsis={{ rows: 3, expandable: true }}
@@ -77,7 +85,7 @@ const DiscussItem = (props) => {
             </Paragraph>
           </Row>
           <Row className={styles.action} align="middle">
-            <CommentOutlined />{' '}
+            <CommentOutlined />
             <span className={styles.comment}>{comments.length} 条评论</span>
           </Row>
         </>
