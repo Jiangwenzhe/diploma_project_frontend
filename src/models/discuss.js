@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 10:51:45
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-30 23:04:16
+ * @LastEditTime: 2020-05-01 17:21:53
  */
 
 import {
@@ -10,7 +10,10 @@ import {
   getDiscussTags,
   getMyDiscussInfo,
   getDiscussDetail,
+  createDiscuss,
 } from '@/service/discuss';
+
+import { message } from 'antd';
 
 const Model = {
   namespace: 'discuss',
@@ -63,6 +66,17 @@ const Model = {
           discussDetail: response.data,
         },
       });
+    },
+    *createDiscuss({ payload }, { call }) {
+      const response = yield call(createDiscuss, payload);
+      if (response.data && response.data._id) {
+        message.success(
+          `题为「 ${response.data.title} 」的${
+            response.data.type === 'article' ? '文章' : '讨论'
+          }已创建成功`,
+        );
+        return 'create_success';
+      }
     },
     *cleanDiscussListInfo(_, { put }) {
       yield put({
