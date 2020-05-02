@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-30 16:25:16
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-02 10:36:15
+ * @LastEditTime: 2020-05-02 20:11:28
  */
 import React, { useState } from 'react';
 import { connect, history } from 'umi';
@@ -27,7 +27,7 @@ import { useSize } from '@umijs/hooks';
 import moment from 'moment';
 import { SendOutlined } from '@ant-design/icons';
 import styles from './index.less';
-import { categoryToCN, typeToCN } from '../../../config/discuss_config';
+import { categoryToCN } from '../../../config/discuss_config';
 
 // 初始化Markdown解析器
 const mdParser = new MarkdownIt(/* Markdown-it options */);
@@ -109,6 +109,7 @@ const DiscussDetail = (props) => {
     }).then((msg) => {
       if (msg === 'success') {
         hideForm();
+        setFormDetail('');
       }
     });
   };
@@ -235,6 +236,13 @@ const DiscussDetail = (props) => {
               </div>
               <div>
                 <MdEditor
+                  config={{
+                    view: {
+                      menu: true,
+                      md: true,
+                      html: false,
+                    },
+                  }}
                   style={{ height: '300px', width: '100%' }}
                   value={formDetail}
                   renderHTML={(text) => mdParser.render(text)}
