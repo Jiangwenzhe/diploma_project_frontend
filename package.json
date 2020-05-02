@@ -27,6 +27,7 @@
     "echarts": "^4.7.0",
     "echarts-for-react": "^2.0.15-beta.1",
     "github-markdown-css": "^4.0.0",
+    "highlight.js": "^10.0.1",
     "lint-staged": "^10.0.7",
     "markdown-it": "^10.0.0",
     "monaco-themes": "^0.3.3",
