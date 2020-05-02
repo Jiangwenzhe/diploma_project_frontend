@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 10:51:45
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-01 22:29:43
+ * @LastEditTime: 2020-05-02 10:04:52
  */
 
 import {
@@ -23,6 +23,11 @@ const Model = {
     discussTags: [],
     total: 0,
     discussDetail: {},
+    communicationQuery: {
+      category: '',
+      type: '',
+      tag: '',
+    },
   },
   effects: {
     *fetchDiscussList({ payload }, { call, put }) {
@@ -89,6 +94,14 @@ const Model = {
         });
         return 'success';
       }
+    },
+    *changeCommunicationQuery({ payload }, { put }) {
+      yield put({
+        type: 'save',
+        payload: {
+          communicationQuery: payload,
+        },
+      });
     },
     *cleanDiscussListInfo(_, { put }) {
       yield put({

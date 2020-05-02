@@ -39,7 +39,7 @@ const Discuss = (props) => {
     dispatch,
     fetchDiscussListLoading,
     fetchMyDiscussInfoLoading,
-    discuss: { discussList, total, discussTags },
+    discuss: { discussList, total, discussTags, communicationQuery },
     user: { currentUser },
   } = props;
 
@@ -107,6 +107,16 @@ const Discuss = (props) => {
     });
   }, [selectCategory, discussType, selectedTags]);
 
+  useEffect(() => {
+    const { type, category } = communicationQuery;
+    if (type) {
+      setDiscussType(type);
+    }
+    if (category) {
+      setSelectCategory([category]);
+    }
+  }, [communicationQuery]);
+
   // refetch discusslist
   const refetchDiscussList = () => {
     dispatch({
@@ -128,6 +138,7 @@ const Discuss = (props) => {
   // 处理页头的 category 的修改
   const handleCategoryChange = (tag) => {
     setSelectCategory([tag]);
+
     // if (tag === 'all') {
     //   setQuery({ ...query, category: '' });
     //   return;
