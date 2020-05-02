@@ -2,14 +2,24 @@
  * @Author: Wenzhe
  * @Date: 2020-04-30 16:25:16
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-01 22:43:08
+ * @LastEditTime: 2020-05-02 10:36:15
  */
 import React, { useState } from 'react';
 import { connect, history } from 'umi';
 import { useMount, useUnmount } from '@umijs/hooks';
 import ReactMarkdown from 'react-markdown';
 import 'github-markdown-css';
-import { Row, Col, message, Button, Comment, Avatar, Tooltip } from 'antd';
+import {
+  Row,
+  Col,
+  message,
+  Button,
+  Comment,
+  Avatar,
+  Tooltip,
+  Breadcrumb,
+  Divider,
+} from 'antd';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import { DownOutlined } from '@ant-design/icons';
@@ -17,6 +27,7 @@ import { useSize } from '@umijs/hooks';
 import moment from 'moment';
 import { SendOutlined } from '@ant-design/icons';
 import styles from './index.less';
+import { categoryToCN, typeToCN } from '../../../config/discuss_config';
 
 // 初始化Markdown解析器
 const mdParser = new MarkdownIt(/* Markdown-it options */);
@@ -114,11 +125,66 @@ const DiscussDetail = (props) => {
     return [...new Set(userArr)].length;
   };
 
+  const callChangeCommunicationQuery = (e, type, category) => {
+    e.preventDefault();
+    dispatch({
+      type: 'discuss/changeCommunicationQuery',
+      payload: {
+        type,
+        category,
+        tag: '',
+      },
+    });
+    return history.push('/discuss');
+  };
+
   return (
     <div>
       <Row>
         <Col span={18}>
           <div className={[styles.shadow, styles.main_discuss_panel].join(' ')}>
+            <div className={styles.detail_header}>
+              <Breadcrumb>
+                <Breadcrumb.Item>
+                  <a
+                    href=""
+                    onClick={(e) =>
+                      callChangeCommunicationQuery(e, 'discuss', '')
+                    }
+                  >
+                    讨论
+                  </a>
+                </Breadcrumb.Item>
+                <Breadcrumb.Item>
+                  <a
+                    href=""
+                    onClick={(e) =>
+                      callChangeCommunicationQuery(
+                        e,
+                        'discuss',
+                        discussDetail.category,
+                      )
+                    }
+                  >
+                    {categoryToCN(discussDetail.category)}
+                  </a>
+                </Breadcrumb.Item>
+                <Breadcrumb.Item>{discussDetail.title}</Breadcrumb.Item>
+              </Breadcrumb>
+              <span>
+                <span className={styles.name}>
+                  {discussDetail.authorInfo && discussDetail.authorInfo.name}
+                </span>
+                <span className={styles.info}>
+                  &nbsp;发起于&nbsp;
+                  {discussDetail.createdAt &&
+                    `${moment(discussDetail.createdAt)
+                      .locale('zh-cn')
+                      .fromNow()}`}
+                </span>
+              </span>
+            </div>
+            <Divider style={{ margin: '5px 0', color: 'rgba(0, 0, 0, 0.8)' }} />
             <div className={styles.content}>
               <div
                 className={
@@ -127,8 +193,8 @@ const DiscussDetail = (props) => {
                     : styles.unfloadMarkdownContent
                 }
               >
+                <h2>{discussDetail.title}</h2>
                 <div ref={ref} className="markdown-body">
-                  <h2>{discussDetail.title}</h2>
                   <ReactMarkdown
                     source={discussDetail.detail}
                     escapeHtml={false}
@@ -206,11 +272,13 @@ const DiscussDetail = (props) => {
                   }
                   datetime={
                     <Tooltip
-                      title={moment(discuss.createdAt).format(
-                        'YYYY-MM-DD HH:mm:ss',
-                      )}
+                      title={moment(discuss.createdAt)
+                        .locale('zh-cn')
+                        .format('YYYY-MM-DD HH:mm:ss')}
                     >
-                      <span>{moment(discuss.createdAt).fromNow()}</span>
+                      <span>
+                        {moment(discuss.createdAt).locale('zh-cn').fromNow()}
+                      </span>
                     </Tooltip>
                   }
                 />
