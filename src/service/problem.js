@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-15 08:24:32
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-22 09:39:15
+ * @LastEditTime: 2020-05-03 08:48:46
  */
 import request from '@/utils/request';
 
@@ -13,10 +13,12 @@ export async function getProlebmList(params) {
   } = params;
   if (title) {
     return request(
-      `/api/problem?current=${current}&pageSize=${pageSize}&title=${title}`,
+      `/api/problem?current=${current}&pageSize=${pageSize}&title=${title}&visible=true`,
     );
   }
-  return request(`/api/problem?current=${current}&pageSize=${pageSize}`);
+  return request(
+    `/api/problem?current=${current}&pageSize=${pageSize}&visible=true`,
+  );
 }
 
 export async function getSingleProblemInfo(params) {
