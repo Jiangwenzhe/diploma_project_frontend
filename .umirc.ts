@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-03-20 13:49:05
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-01 09:16:40
+ * @LastEditTime: 2020-05-03 23:41:22
  */
 import { defineConfig } from 'umi';
 
@@ -63,6 +63,11 @@ export default defineConfig({
         {
           path: '/contest',
           component: '@/pages/contest/index',
+          title: 'Contest | Node OJ',
+        },
+        {
+          path: '/contest/:cid',
+          component: '@/pages/contest/contestDetail/[cid]',
           title: 'Contest | Node OJ',
         },
         {
