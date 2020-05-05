@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, Row, Col, Avatar, Typography, Button, Layout } from 'antd';
+import { Menu, Row, Col, Avatar, Typography, Button } from 'antd';
 import styles from './index.less';
 import { Link, connect, history } from 'umi';
 import LoginModal from '../loginModal';
