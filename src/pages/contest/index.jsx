@@ -8,6 +8,7 @@ import {
   Modal,
   Input,
   message,
+  Progress,
 } from 'antd';
 import { connect, Link } from 'umi';
 import moment from 'moment';
@@ -137,9 +138,32 @@ const Contest = (props) => {
     {
       title: '标题',
       dataIndex: 'title',
-      width: '50%',
+      width: '10%',
       render: (text, record) => {
         return <a onClick={() => handleJoinContest(record)}>{text}</a>;
+      },
+    },
+    {
+      title: '进度',
+      width: '40%',
+      render: (text, record) => {
+        const total_time = moment.duration(
+          moment(record.end_time).diff(moment(record.start_time)),
+        )._milliseconds;
+        const rest_time = moment.duration(
+          moment(Date.now()).diff(moment(record.start_time)),
+        )._milliseconds;
+        const percent = (rest_time / total_time) * 100;
+        console.log(record.end_time, record.start_time);
+        return (
+          <Progress
+            strokeWidth={10}
+            size="small"
+            percent={rest_time > 0 ? percent : 0}
+            status="active"
+            showInfo={false}
+          />
+        );
       },
     },
     {
