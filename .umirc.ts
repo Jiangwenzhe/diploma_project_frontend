@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-03-20 13:49:05
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-03 23:41:22
+ * @LastEditTime: 2020-05-05 20:22:33
  */
 import { defineConfig } from 'umi';
 
@@ -69,6 +69,28 @@ export default defineConfig({
           path: '/contest/:cid',
           component: '@/pages/contest/contestDetail/[cid]',
           title: 'Contest | Node OJ',
+          routes: [
+            {
+              path: '/contest/:cid',
+              component: '@/pages/contest/contestDetail/overall',
+              title: '总览 | Contest',
+            },
+            {
+              path: '/contest/:cid/problem/:id',
+              component: '@/pages/contest/contestDetail/problem',
+              title: '题目 | Contest',
+            },
+            {
+              path: '/contest/:cid/status',
+              component: '@/pages/contest/contestDetail/status',
+              title: 'Status | Contest',
+            },
+            {
+              path: '/contest/:cid/ranklist',
+              component: '@/pages/contest/contestDetail/ranklist',
+              title: 'Ranklist | Contest',
+            },
+          ],
         },
         {
           path: '/status',
