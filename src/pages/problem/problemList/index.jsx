@@ -9,6 +9,7 @@ import {
   Divider,
   Menu,
   Dropdown,
+  Progress,
 } from 'antd';
 import styles from './index.less';
 import request from '@/utils/request';
@@ -24,6 +25,21 @@ const { Search } = Input;
 const IconFont = createFromIconfontCN({
   scriptUrl: icon_font_url,
 });
+
+const makeStrokeColor = (rate) => {
+  if (rate <= 25) {
+    return '#f5222d';
+  }
+  if (rate > 25 && rate <= 50) {
+    return '#fa8c16';
+  }
+  if (rate > 50 && rate <= 75) {
+    return '#1890ff';
+  }
+  if (rate > 75) {
+    return '#52c41a';
+  }
+};
 
 const difficultyToTag = (difficulty) => {
   if (!difficulty) return <Tag color="success">简单</Tag>;
@@ -129,17 +145,31 @@ const ProblemList = (props) => {
       width: '10%',
     },
     {
-      title: '通过率',
+      title: '难度',
       render: (value) => {
-        const rate = Math.round((value.solve / value.submit) * 100);
-        return <>{`${isNaN(rate) ? 0 : rate}%`}</>;
+        return difficultyToTag(value.difficulty);
       },
       width: '10%',
     },
     {
-      title: '难度',
+      title: '通过率',
       render: (value) => {
-        return difficultyToTag(value.difficulty);
+        const rate = Math.round((value.solve / value.submit) * 100);
+        const real_rate = isNaN(rate) ? 0 : rate;
+        return (
+          <>
+            <Progress
+              style={{ marginRight: '10px' }}
+              type="circle"
+              showInfo={false}
+              percent={real_rate === 0 ? 4 : real_rate}
+              width={20}
+              strokeWidth={13}
+              strokeColor={makeStrokeColor(real_rate)}
+            />
+            {`${isNaN(rate) ? 0 : rate}%`}
+          </>
+        );
       },
       width: '10%',
     },
