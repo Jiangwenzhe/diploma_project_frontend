@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-16 16:36:43
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-01 11:53:50
+ * @LastEditTime: 2020-05-06 16:12:31
  */
 import React, { useState, useRef } from 'react';
 import styles from './index.less';
@@ -388,12 +388,6 @@ const problemDetail = (props) => {
 
   return (
     <>
-      {/* <PageHeader
-        className={styles.problem_header}
-        onBack={() => history.goBack()}
-        title=""
-        subTitle={`pid: ${match.params.pid}`}
-      /> */}
       <Row gutter={16}>
         <Col span={8}>
           <Tabs onChange={handleLeftTabChange} type="card">
