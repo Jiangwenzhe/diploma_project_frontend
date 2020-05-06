@@ -17,6 +17,7 @@ import UserProgressChart from '../../../components/UserProgressChart';
 import { connect, Link } from 'umi';
 import { createFromIconfontCN, DownOutlined } from '@ant-design/icons';
 import icon_font_url from '../../../config/iconfont';
+import { makeStrokeColor } from '../../../config/contest_config';
 
 const { Title } = Typography;
 const { CheckableTag } = Tag;
@@ -25,21 +26,6 @@ const { Search } = Input;
 const IconFont = createFromIconfontCN({
   scriptUrl: icon_font_url,
 });
-
-const makeStrokeColor = (rate) => {
-  if (rate <= 25) {
-    return '#f5222d';
-  }
-  if (rate > 25 && rate <= 50) {
-    return '#fa8c16';
-  }
-  if (rate > 50 && rate <= 75) {
-    return '#1890ff';
-  }
-  if (rate > 75) {
-    return '#52c41a';
-  }
-};
 
 const difficultyToTag = (difficulty) => {
   if (!difficulty) return <Tag color="success">简单</Tag>;
