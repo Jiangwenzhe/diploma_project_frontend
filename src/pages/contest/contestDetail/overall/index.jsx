@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-05-03 19:53:50
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-05 21:02:08
+ * @LastEditTime: 2020-05-06 16:09:27
  */
 
 import React, { useState } from 'react';
@@ -16,6 +16,7 @@ import CodeBlock from '../../../../components/CodeBlock';
 import moment from 'moment';
 import styles from './index.less';
 import icon_font_url from '../../../../config/iconfont';
+import { makeStrokeColor } from '../../../../config/contest_config';
 
 const IconFont = createFromIconfontCN({
   scriptUrl: icon_font_url,
@@ -25,7 +26,6 @@ const ContestOverAll = (props) => {
   const {
     match,
     dispatch,
-    fetchContestDetailLoading,
     contestDetail: { contestDetail },
     user: { currentUser },
   } = props;
@@ -72,8 +72,12 @@ const ContestOverAll = (props) => {
     {
       title: '题名',
       // dataIndex: 'title',
-      render: (value) => {
-        return <Link to={`/problem/${value.pid}`}>{value.title}</Link>;
+      render: (value, _, index) => {
+        return (
+          <Link to={`/contest/${match.params.cid}/problem/${index + 1}`}>
+            {value.title}
+          </Link>
+        );
       },
       width: '50%',
     },
@@ -81,7 +85,21 @@ const ContestOverAll = (props) => {
       title: '通过率',
       render: (value) => {
         const rate = Math.round((value.solve / value.submit) * 100);
-        return <>{`${isNaN(rate) ? 0 : rate}%`}</>;
+        const real_rate = isNaN(rate) ? 0 : rate;
+        return (
+          <>
+            <Progress
+              style={{ marginRight: '10px' }}
+              type="circle"
+              showInfo={false}
+              percent={real_rate === 0 ? 4 : real_rate}
+              width={20}
+              strokeWidth={13}
+              strokeColor={makeStrokeColor(real_rate)}
+            />
+            {`${isNaN(rate) ? 0 : rate}%`}
+          </>
+        );
       },
       width: '10%',
     },
