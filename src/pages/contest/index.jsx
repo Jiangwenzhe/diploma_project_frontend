@@ -13,6 +13,7 @@ import {
 import { connect, Link } from 'umi';
 import moment from 'moment';
 import styles from './index.less';
+import { makeReverseStrokeColor } from '../../config/contest_config';
 
 const { Password } = Input;
 
@@ -154,7 +155,6 @@ const Contest = (props) => {
           moment(Date.now()).diff(moment(record.start_time)),
         )._milliseconds;
         const percent = (rest_time / total_time) * 100;
-        console.log(record.end_time, record.start_time);
         return (
           <Progress
             strokeWidth={10}
@@ -162,6 +162,7 @@ const Contest = (props) => {
             percent={rest_time > 0 ? percent : 0}
             status="active"
             showInfo={false}
+            strokeColor={makeReverseStrokeColor(percent)}
           />
         );
       },
