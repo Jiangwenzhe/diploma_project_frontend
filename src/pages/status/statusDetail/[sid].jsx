@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-25 16:25:16
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-25 16:31:21
+ * @LastEditTime: 2020-05-07 11:15:17
  */
 import React from 'react';
 import { connect, history } from 'umi';
@@ -74,7 +74,7 @@ const StatusDetail = (props) => {
       <PageHeader
         className="site-page-header"
         onBack={() => history.goBack()}
-        title="提交记录"
+        title={`提交记录 | Pid: ${submissionDetail.pid}`}
         subTitle={`sid: ${match.params.sid}`}
       />
       <div style={{ padding: '16px 30px' }}>
