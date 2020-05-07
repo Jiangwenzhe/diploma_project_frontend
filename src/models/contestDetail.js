@@ -2,9 +2,13 @@
  * @Author: Wenzhe
  * @Date: 2020-05-05 16:38:42
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-06 15:59:19
+ * @LastEditTime: 2020-05-07 09:29:10
  */
-import { getContentDetail, getProblemInfoByCidAndPid } from '@/service/contest';
+import {
+  getContentDetail,
+  getProblemInfoByCidAndPid,
+  getStatusList,
+} from '@/service/contest';
 import { createSubmission, getSubmission } from '@/service/submission';
 import { message } from 'antd';
 import { history } from 'umi';
@@ -16,6 +20,8 @@ const Model = {
     problemDetail: {},
     submissionInfo: {},
     currentSubmissionID: null,
+    statusList: [],
+    statusTotal: 0,
   },
   effects: {
     *fetchContestDetail({ payload }, { call, put }) {
@@ -88,6 +94,19 @@ const Model = {
       if (needToCheckAgain) {
         yield put({ type: 'getSubmission', payload: clone_payload });
       }
+    },
+    *fetchStatusList({ payload }, { call, put }) {
+      const response = yield call(getStatusList, payload);
+      console.log(response);
+      yield put({
+        type: 'save',
+        payload: {
+          statusList: Array.isArray(response.data.list)
+            ? response.data.list
+            : [],
+          statusTotal: response.data.total,
+        },
+      });
     },
     *cleanContestDetail(_, { put }) {
       yield put({
