@@ -48,7 +48,9 @@ const StatusList = (props) => {
     },
     {
       title: '提交用户',
-      dataIndex: 'username',
+      render: (_, record) => {
+        return record.userInfo.name;
+      },
     },
     {
       title: '状态',
