@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Row } from 'antd';
+import { Table, Row, Input } from 'antd';
 import { connect, Link } from 'umi';
+
+const { Search } = Input;
 
 const RankList = (props) => {
   const {
@@ -15,22 +17,62 @@ const RankList = (props) => {
     total: 0,
   });
 
+  const [name, setName] = useState('');
+
+  const [query, setQuery] = useState({
+    name: '',
+  });
+
   useEffect(() => {
     dispatch({
       type: 'ranklist/fetchRankList',
-      payload: { pagination },
+      payload: { query },
     });
-  }, [dispatch, pagination]);
+  }, [dispatch, pagination, query]);
 
   const tableChangeHandler = (current_pagination) => {
     setPagination(current_pagination);
   };
 
+  const changeSearchName = (e) => {
+    if (e.target.value === '') {
+      setQuery({ ...query, name: '' });
+    }
+    setName(e.target.value);
+  };
+
+  const handleSearch = () => {
+    setQuery({ ...query, name });
+  };
+
   const columns = [
     {
       title: '排名',
-      width: '5%',
-      render: (text, record, index) => `${index + 1}`,
+      width: '6%',
+      render: (text, record, index) => {
+        if (record.rank === 1) {
+          return (
+            <>
+              <strong>1</strong> <span style={{ fontSize: '18px' }}>🏅️</span>
+            </>
+          );
+        }
+        if (record.rank === 2) {
+          return (
+            <>
+              <strong>2</strong> <span style={{ fontSize: '18px' }}>🥈</span>
+            </>
+          );
+        }
+        if (record.rank === 3) {
+          return (
+            <>
+              <strong>3</strong> <span style={{ fontSize: '18px' }}>🥉</span>
+            </>
+          );
+        }
+        return <strong>{record.rank}</strong>;
+      },
     },
     {
       title: '用户名称',
@@ -80,8 +122,18 @@ const RankList = (props) => {
 
   return (
     <div>
+      <div style={{ marginBottom: '20px' }}>
+        <Search
+          placeholder="请输入用户名"
+          size="large"
+          onChange={(e) => changeSearchName(e)}
+          onSearch={handleSearch}
+          value={name}
+          enterButton
+        />
+      </div>
       <Table
-        title={() => <Row></Row>}
+        size="large"
         columns={columns}
         rowKey="_id"
         onChange={tableChangeHandler}
