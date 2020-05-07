@@ -35,9 +35,6 @@ const StatusList = (props) => {
     language: '',
   });
 
-  const [pid, setPid] = useState('');
-  const [username, setUsername] = useState('');
-
   useEffect(() => {
     dispatch({
       type: 'contestDetail/fetchStatusList',
@@ -50,8 +47,8 @@ const StatusList = (props) => {
   };
 
   const handleFormFinish = (values) => {
-    console.log('Finish:', values);
     const { pid, name, result, language } = values;
+    setPagination({ ...pagination, current: 1 });
     setQuery({
       ...query,
       pid,
@@ -118,11 +115,6 @@ const StatusList = (props) => {
       render: (time_stamp) => moment(time_stamp).format('YYYY-MM-DD HH:mm:ss'),
     },
   ];
-
-  const formItemLayout = {
-    labelCol: { span: 8 },
-    wrapperCol: { span: 17 },
-  };
 
   const buttonItemLayout = {
     wrapperCol: { span: 14, offset: 4 },
