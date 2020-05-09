@@ -2,12 +2,13 @@
  * @Author: Wenzhe
  * @Date: 2020-05-05 16:38:42
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-07 09:29:10
+ * @LastEditTime: 2020-05-09 16:57:18
  */
 import {
   getContentDetail,
   getProblemInfoByCidAndPid,
   getStatusList,
+  getRanklist,
 } from '@/service/contest';
 import { createSubmission, getSubmission } from '@/service/submission';
 import { message } from 'antd';
@@ -22,6 +23,7 @@ const Model = {
     currentSubmissionID: null,
     statusList: [],
     statusTotal: 0,
+    rankList: [],
   },
   effects: {
     *fetchContestDetail({ payload }, { call, put }) {
@@ -105,6 +107,16 @@ const Model = {
             ? response.data.list
             : [],
           statusTotal: response.data.total,
+        },
+      });
+    },
+    *fetchRankList({ payload }, { call, put }) {
+      const response = yield call(getRanklist, payload);
+      console.log(response);
+      yield put({
+        type: 'save',
+        payload: {
+          rankList: response.data,
         },
       });
     },

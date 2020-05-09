@@ -21,6 +21,11 @@ export async function getContentDetail(params) {
   return request(`/api/contest/${cid}`);
 }
 
+export async function getRanklist(params) {
+  const { cid } = params;
+  return request(`/api/contest_ranklist/${cid}`);
+}
+
 export async function verifyUserPersmission(params) {
   return request('/api/contest/verify', {
     method: 'POST',
