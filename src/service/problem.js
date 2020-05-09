@@ -2,22 +2,23 @@
  * @Author: Wenzhe
  * @Date: 2020-04-15 08:24:32
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-03 08:48:46
+ * @LastEditTime: 2020-05-08 09:58:33
  */
 import request from '@/utils/request';
 
 export async function getProlebmList(params) {
   const {
     pagination: { current, pageSize },
-    query: { title },
+    query: { title, difficulty, tag },
   } = params;
-  if (title) {
-    return request(
-      `/api/problem?current=${current}&pageSize=${pageSize}&title=${title}&visible=true`,
-    );
-  }
+  console.log(difficulty);
+  // if (title) {
+  //   return request(
+  //     `/api/problem?current=${current}&pageSize=${pageSize}&title=${title}&visible=true`,
+  //   );
+  // }
   return request(
-    `/api/problem?current=${current}&pageSize=${pageSize}&visible=true`,
+    `/api/problem?current=${current}&pageSize=${pageSize}&title=${title}&difficulty=${difficulty}&tag=${tag}&visible=true`,
   );
 }
 

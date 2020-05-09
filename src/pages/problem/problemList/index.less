@@ -11,22 +11,57 @@
   width: 90%;
 }
 
+.operation_title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.searchBox {
+  display: inline-block;
+  width: 180px;
+  margin-left: 10px;
+}
+
+.selectBox {
+  display: inline-block;
+  width: 120px;
+}
+
 .section_title {
   font-weight: 300;
   font-size: 20px;
   .tag_group {
     :global {
       .ant-tag {
+        display: inline-flex;
+        box-sizing: border-box;
+        -webkit-box-align: center;
+        align-items: center;
+        -webkit-box-pack: center;
+        justify-content: center;
+        font-size: 12px;
+        line-height: 14px;
+        color: rgba(0, 0, 0, 0.6);
         font-weight: 400;
-        border-radius: 16px;
-        padding: 1px 10px;
-        border-color: #f0f0f0;
+        user-select: none;
+        border-width: 0px;
+        border-style: initial;
+        border-color: initial;
+        border-image: initial;
+        border-radius: 3px;
+        transition: all 0.3s ease 0s;
+        padding: 7px 9px;
+
+        margin-top: 10px;
+        margin-right: 10px;
         &:hover {
-          border-color: #1890ff;
+          background-color: rgb(207, 216, 220);
+          cursor: pointer;
         }
       }
-      .ant-tag-checkable {
-        background-color: none;
+      .ant-tag-checkable-checked {
+        font-weight: 700;
+        background-color: #e8e8e8;
       }
     }
   }

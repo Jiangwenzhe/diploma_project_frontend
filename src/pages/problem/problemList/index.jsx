@@ -10,6 +10,7 @@ import {
   Menu,
   Dropdown,
   Progress,
+  Select,
 } from 'antd';
 import styles from './index.less';
 import request from '@/utils/request';
@@ -19,7 +20,7 @@ import { createFromIconfontCN, DownOutlined } from '@ant-design/icons';
 import icon_font_url from '../../../config/iconfont';
 import { makeStrokeColor } from '../../../config/contest_config';
 
-const { Title } = Typography;
+const { Option } = Select;
 const { CheckableTag } = Tag;
 const { Search } = Input;
 
@@ -32,10 +33,10 @@ const difficultyToTag = (difficulty) => {
   switch (difficulty) {
     case 'Low':
       return <Tag color="success">简单</Tag>;
-    case 'Med':
-      return <Tag color="success">中等</Tag>;
+    case 'Mid':
+      return <Tag color="warning">中等</Tag>;
     case 'High':
-      return <Tag color="success">困难</Tag>;
+      return <Tag color="error">困难</Tag>;
     default:
       return <Tag color="success">简单</Tag>;
   }
@@ -54,7 +55,12 @@ const ProblemList = (props) => {
     pageSize: 10,
     total: 0,
   });
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState({
+    title: '',
+    difficulty: '',
+    tag: '',
+  });
+  const [title, setTitle] = useState('');
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
 
@@ -77,9 +83,27 @@ const ProblemList = (props) => {
     setPagination(current_pagination);
   };
 
-  const handleTitleQuery = (value) => {
-    setQuery({ ...query, title: value });
+  const handleTitleQuery = () => {
+    setQuery({ ...query, title });
     setPagination({ current: 1, pageSize: 10 });
+  };
+
+  const handleSearchBoxChange = (e) => {
+    if (e.target.value === '') {
+      setQuery({ ...query, title: '' });
+      setPagination({ current: 1, pageSize: 10 });
+      return;
+    }
+    setTitle(e.target.value);
+  };
+
+  const hadnleDifficultySelect = (value) => {
+    console.log(value);
+    if (!value) {
+      setQuery({ ...query, difficulty: '' });
+      return;
+    }
+    setQuery({ ...query, difficulty: value });
   };
 
   const handleProblemTagSelected = (tag, checked) => {
@@ -89,11 +113,14 @@ const ProblemList = (props) => {
       ? [...selectedTags, tag]
       : selectedTags.filter((t) => t !== tag);
     setSelectedTags(nextSelectedTags);
+    const tagquery =
+      nextSelectedTags.length === 0 ? '' : nextSelectedTags.join(',');
+    setQuery({ ...query, tag: tagquery });
   };
 
   const columns = [
     {
-      title: '',
+      title: () => <IconFont type="icon-hashtag" />,
       dataIndex: '',
       key: 'pid',
       width: '5%',
@@ -110,10 +137,10 @@ const ProblemList = (props) => {
       },
     },
     {
-      title: () => <IconFont type="icon-hashtag" />,
+      title: 'pid',
       dataIndex: 'pid',
       key: 'pid',
-      width: '10%',
+      width: '5%',
     },
     {
       title: '题名',
@@ -124,7 +151,7 @@ const ProblemList = (props) => {
       width: '40%',
     },
     {
-      title: '题解',
+      title: '提交次数',
       render: (value) => {
         return value.submit;
       },
@@ -161,18 +188,37 @@ const ProblemList = (props) => {
     },
   ];
 
-  const select_difficulty_menu = (
-    <Menu>
-      <Menu.Item>简单</Menu.Item>
-      <Menu.Item>中等</Menu.Item>
-      <Menu.Item>困难</Menu.Item>
-    </Menu>
-  );
-
   return (
     <div>
       <Row style={{ margin: '0 auot' }}>
-        <Col span={16} style={{ marginLeft: '20px' }}>
+        <Col span={18} style={{ marginLeft: '20px' }}>
+          <div style={{ marginBottom: '10px' }}>
+            <div className={styles.operation_title}>
+              <div>
+                <span className={styles.section_header}>题目列表</span>
+              </div>
+              <div>
+                <div className={styles.selectBox}>
+                  <Select
+                    placeholder="请选择难度"
+                    style={{ width: 120 }}
+                    onChange={hadnleDifficultySelect}
+                    allowClear
+                  >
+                    <Option value="Low">简单</Option>
+                    <Option value="Mid">中等</Option>
+                    <Option value="High">困难</Option>
+                  </Select>
+                </div>
+                <div className={styles.searchBox}>
+                  <Search
+                    onChange={handleSearchBoxChange}
+                    onSearch={handleTitleQuery}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
           <Table
             columns={columns}
             rowKey="_id"
@@ -180,29 +226,9 @@ const ProblemList = (props) => {
             pagination={{ ...pagination, total, showSizeChanger: true }}
             onChange={tableChangeHandler}
             loading={fetching}
-            title={() => (
-              <Row align="middle">
-                <Col span={4}>
-                  <Title level={4}>题目列表</Title>
-                </Col>
-                <Col offset={12} span={4}>
-                  <Search />
-                </Col>
-                <Col span={1} offset={1}>
-                  <Dropdown overlay={select_difficulty_menu}>
-                    <a
-                      className="ant-dropdown-link"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      难度 <DownOutlined />
-                    </a>
-                  </Dropdown>
-                </Col>
-              </Row>
-            )}
           />
         </Col>
-        <Col span={5} offset={1}>
+        <Col span={4} offset={1}>
           <Row>
             <div className={styles.section_title}>
               <IconFont type="icon-tag-o" />
