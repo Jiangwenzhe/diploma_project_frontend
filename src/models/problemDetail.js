@@ -2,10 +2,11 @@
  * @Author: Wenzhe
  * @Date: 2020-04-16 16:36:43
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-24 10:16:03
+ * @LastEditTime: 2020-05-08 23:34:30
  */
 import { getSingleProblemInfo } from '@/service/problem';
 import { createSubmission, getSubmission } from '@/service/submission';
+import { getUserQuestionsSubmittedRecords } from '@/service/status';
 import { message } from 'antd';
 import { history } from 'umi';
 
@@ -15,6 +16,7 @@ const Model = {
     problemInfo: {},
     submissionInfo: {},
     currentSubmissionID: null,
+    userSubmissionInfo: [],
   },
   effects: {
     *fetchProblemInfo({ payload }, { call, put }) {
@@ -80,6 +82,15 @@ const Model = {
         yield put({ type: 'getSubmission', payload: clone_payload });
       }
     },
+    *getUserQuestionsSubmittedRecords({ payload }, { call, put }) {
+      const response = yield call(getUserQuestionsSubmittedRecords, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          userSubmissionInfo: response.data.list ? response.data.list : [],
+        },
+      });
+    },
     *cleanProblemDetailModel(_, { put }) {
       yield put({
         type: 'save',
@@ -87,6 +98,7 @@ const Model = {
           problemInfo: {},
           currentSubmissionID: null,
           submissionInfo: {},
+          userSubmissionInfo: [],
         },
       });
     },

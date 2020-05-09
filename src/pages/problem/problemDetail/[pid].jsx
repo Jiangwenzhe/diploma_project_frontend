@@ -2,9 +2,9 @@
  * @Author: Wenzhe
  * @Date: 2020-04-16 16:36:43
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-06 16:12:31
+ * @LastEditTime: 2020-05-09 11:34:38
  */
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styles from './index.less';
 import {
   Row,
@@ -23,8 +23,11 @@ import {
   Alert,
   Table,
   message,
+  Timeline,
+  Switch,
 } from 'antd';
-import { connect } from 'umi';
+import moment from 'moment';
+import { connect, Link } from 'umi';
 import ReactMarkdown from 'react-markdown';
 import { ControlledEditor } from '@monaco-editor/react';
 import { monaco } from '@monaco-editor/react';
@@ -46,7 +49,14 @@ import {
 import CodeCopyablePreview from '../../../components/CodeCopyablePreview';
 import { BtoMB } from '../../../utils/tool_fuc';
 import ShowCode from '../../../components/showCode/index';
-import { createFromIconfontCN, CaretRightOutlined } from '@ant-design/icons';
+import {
+  createFromIconfontCN,
+  CaretRightOutlined,
+  SendOutlined,
+  ReloadOutlined,
+  SettingOutlined,
+  LinkOutlined,
+} from '@ant-design/icons';
 import icon_font_url from '../../../config/iconfont';
 import StatusTag from '../../../components/StatusTag';
 
@@ -84,6 +94,23 @@ const getLastSubmissionFromLocalStorage = (pid) => {
   return JSON.parse(last_submission);
 };
 
+const makeTimeLineItem = (record) => {
+  const color = record.result === 0 ? 'green' : 'red';
+  console.log(record);
+  return (
+    <Timeline.Item key={record._id} color={color}>
+      <p>
+        {<StatusTag status={record.result} />}
+        <Link to={`/status/${record._id}`}>
+          <LinkOutlined />
+        </Link>
+      </p>
+      <p>{moment(record.create_at).format('YYYY-MM-DD HH:mm:ss')}</p>
+      <p>执行语言: {record.language}</p>
+    </Timeline.Item>
+  );
+};
+
 const loadEditorTheme = (selected_theme) => {
   return new Promise((res) => {
     monaco
@@ -114,7 +141,12 @@ const problemDetail = (props) => {
   const {
     match,
     dispatch,
-    problemDetail: { problemInfo, submissionInfo, currentSubmissionID },
+    problemDetail: {
+      problemInfo,
+      submissionInfo,
+      currentSubmissionID,
+      userSubmissionInfo,
+    },
     user: { currentUser },
     submitting,
   } = props;
@@ -163,6 +195,7 @@ const problemDetail = (props) => {
   const [judgeResultDrawerVisible, setJudgeResultDrawerVisible] = useState(
     false,
   );
+  const [timeLineReverse, setTimeLineReverse] = useState(false);
 
   const editorRef = useRef();
 
@@ -192,6 +225,18 @@ const problemDetail = (props) => {
       });
     }
   });
+
+  useEffect(() => {
+    if (Object.keys(currentUser).length !== 0) {
+      dispatch({
+        type: 'problemDetail/getUserQuestionsSubmittedRecords',
+        payload: {
+          uid: currentUser.uid,
+          pid: match.params.pid,
+        },
+      });
+    }
+  }, [dispatch, match, currentUser]);
 
   // 在组件卸载的时候需要清除 Model 中的 state
   useUnmount(() => {
@@ -353,6 +398,10 @@ const problemDetail = (props) => {
     });
   }, 300);
 
+  const toggleTimeLineReverse = () => {
+    setTimeLineReverse(!timeLineReverse);
+  };
+
   const DrawerTableColumns = [
     {
       title: '#',
@@ -447,7 +496,7 @@ const problemDetail = (props) => {
                 </Col>
               </Row>
             </TabPane>
-            <TabPane
+            {/* <TabPane
               tab={
                 <span>
                   <IconFont type="icon-daan" />
@@ -457,7 +506,7 @@ const problemDetail = (props) => {
               key="2"
             >
               Content of Tab Pane 2
-            </TabPane>
+            </TabPane> */}
             <TabPane
               tab={
                 <span>
@@ -467,16 +516,29 @@ const problemDetail = (props) => {
               }
               key="3"
             >
-              Content of Tab Pane 3
+              <div>
+                <Switch
+                  defaultChecked
+                  checkedChildren="正序"
+                  unCheckedChildren="逆序"
+                  checked={!timeLineReverse}
+                  onChange={toggleTimeLineReverse}
+                />
+              </div>
+              <div className={styles.timeLine}>
+                <Timeline mode="alternate" reverse={timeLineReverse}>
+                  {userSubmissionInfo.map((record) => makeTimeLineItem(record))}
+                </Timeline>
+              </div>
             </TabPane>
           </Tabs>
         </Col>
         <Col span={16}>
-          <Row>
-            <Col>
+          <div className={styles.top_operation_panel}>
+            <div>
               <Select
                 defaultValue={judge_language}
-                style={{ width: 300 }}
+                style={{ width: 200 }}
                 onChange={handleLanguageSelectChange}
               >
                 {language_config.map((item) => (
@@ -485,14 +547,20 @@ const problemDetail = (props) => {
                   </Option>
                 ))}
               </Select>
-            </Col>
-            <Col>
-              <Button onClick={() => handleEditorRedo()}>redo</Button>
-            </Col>
-            <Col>
-              <Button onClick={() => showEditorSettingModal()}>设置</Button>
-            </Col>
-          </Row>
+              <Button
+                style={{ marginLeft: '10px' }}
+                onClick={() => handleEditorRedo()}
+              >
+                <ReloadOutlined />
+              </Button>
+              <Button
+                style={{ marginLeft: '5px' }}
+                onClick={() => showEditorSettingModal()}
+              >
+                <SettingOutlined />
+              </Button>
+            </div>
+          </div>
           <div className={styles.editor_window}>
             <ControlledEditor
               height="600px"
@@ -558,15 +626,15 @@ const problemDetail = (props) => {
             )}
             <Button
               size="large"
-              type="primary"
-              style={{ padding: '6px 30px', borderRadius: '4px' }}
+              // type="primary"
+              // style={{ padding: '6px 30px', borderRadius: '4px' }}
               onClick={run}
               loading={
                 submitting ||
                 (currentSubmissionID && !(submissionInfo.result + 3))
               }
             >
-              提交
+              提交 <SendOutlined />
             </Button>
           </div>
         </Col>
