@@ -42,6 +42,34 @@ const difficultyToTag = (difficulty) => {
   }
 };
 
+const makeUserProgressChartData = (currentUser) => {
+  console.log(currentUser);
+  if (!currentUser) return [{ name: '123', value: '12312' }];
+  if (Object.keys(currentUser).length !== 0) {
+    const {
+      solved_list,
+      submit_list,
+      problemListCount,
+      failed_list,
+    } = currentUser;
+    // console.log(solved_list);
+    return [
+      {
+        name: '已解答:',
+        value: solved_list.length,
+      },
+      {
+        name: '尝试过:',
+        value: failed_list.length,
+      },
+      {
+        name: '未解答:',
+        value: problemListCount - submit_list.length,
+      },
+    ];
+  }
+};
+
 const ProblemList = (props) => {
   const {
     problem: { problemList, total },
@@ -252,18 +280,20 @@ const ProblemList = (props) => {
             </div>
           </Row>
           <Divider />
-          <Row>
+          {currentUser && (
             <div>
               <div className={styles.section_header}>
                 <IconFont type="icon-schedule" />
                 <span style={{ marginLeft: '10px' }}>我的进度</span>
               </div>
               <div className={styles.user_progress_chart}>
-                <UserProgressChart />
+                <UserProgressChart
+                  data={makeUserProgressChartData(currentUser)}
+                />
                 <Divider />
               </div>
             </div>
-          </Row>
+          )}
         </Col>
       </Row>
     </div>

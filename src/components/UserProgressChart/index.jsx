@@ -1,38 +1,92 @@
-import React from 'react';
-import ReactEcharts from 'echarts-for-react';
+import React, { PureComponent } from 'react';
+import { PieChart, Pie, Sector, Cell, Label } from 'recharts';
+import styles from './index.less';
 
-const UserProgressChart = (props) => {
-  const getOption = () => ({
-    tooltip: {
-      trigger: 'item',
-      formatter: '{a} <br/>{b}: {c} ({d}%)',
-    },
-    series: {
-      type: 'pie',
-      color: ['#52c41a', '#1990FF', '#faad14'],
-      // radius: ['50%', '70%'],
-      radius: '80%',
-      center: ['50%', '50%'], //  上下居中
-      labelLine: {
-        show: false,
-      },
-      label: {
-        show: false,
-        position: 'center',
-      },
-      data: [
-        { name: 'solved', value: 5 },
-        { name: 'unsolved', value: 92 },
-        { name: 'tried', value: 3 },
-      ],
-    },
-  });
+const COLORS = ['#52c41a', '#fa8c16', '#d9d9d9'];
+
+const renderActiveShape = (props) => {
+  const {
+    cx,
+    cy,
+    innerRadius,
+    outerRadius,
+    startAngle,
+    endAngle,
+    fill,
+  } = props;
 
   return (
-    <>
-      <ReactEcharts option={getOption()} style={{ height: 200, width: 200 }} />
-    </>
+    <g>
+      <Sector
+        cx={cx}
+        cy={cy}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius + 3}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        fill={fill}
+      />
+    </g>
   );
 };
 
-export default UserProgressChart;
+export default class Example extends PureComponent {
+  state = {
+    activeIndex: 0,
+  };
+
+  componentDidMount() {
+    console.log(this.props.data);
+  }
+
+  onPieEnter = (data, index) => {
+    this.setState({
+      activeIndex: index,
+    });
+  };
+
+  onPieLeave = (data, index) => {
+    this.setState({
+      activeIndex: 0,
+    });
+  };
+
+  render() {
+    const { data } = this.props;
+    return (
+      <PieChart width={200} height={200}>
+        <Pie
+          data={data}
+          onMouseEnter={this.onPieEnter}
+          onMouseLeave={this.onPieLeave}
+          activeIndex={this.state.activeIndex}
+          activeShape={renderActiveShape}
+          innerRadius={70}
+          outerRadius={80}
+          paddingAngle={3}
+          dataKey="value"
+        >
+          <Label
+            value={data ? data[this.state.activeIndex].name : ''}
+            position="centerBottom"
+            fill={'#595959'}
+            className={styles.label_top}
+          />
+          <Label
+            value={data ? data[this.state.activeIndex].value : ''}
+            position="centerTop"
+            className={styles.label_bottom}
+            fill={'#595959'}
+          />
+          {data &&
+            data.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+              />
+            ))}
+        </Pie>
+      </PieChart>
+    );
+  }
+}
