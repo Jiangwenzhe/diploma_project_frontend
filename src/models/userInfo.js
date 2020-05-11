@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-25 16:36:55
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-27 09:49:24
+ * @LastEditTime: 2020-05-11 16:23:47
  */
 import { fetchUserInfo, updateUserInfo } from '@/service/userInfo';
 import { message } from 'antd';
@@ -34,6 +34,9 @@ const Model = {
           payload: {
             uid: payload.uid,
           },
+        });
+        yield put({
+          type: 'user/fetchCurrent',
         });
       }
     },

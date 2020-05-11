@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-25 16:25:16
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-27 09:59:27
+ * @LastEditTime: 2020-05-11 16:22:29
  */
 import React, { useEffect, useState } from 'react';
 import { connect, Link } from 'umi';
@@ -20,8 +20,14 @@ import {
   Input,
   Button,
   Modal,
+  Upload,
+  message,
 } from 'antd';
-import { createFromIconfontCN } from '@ant-design/icons';
+import {
+  createFromIconfontCN,
+  LoadingOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 import icon_font_url from '../../../config/iconfont';
 
 const { TabPane } = Tabs;
@@ -41,6 +47,8 @@ const UserDetail = (props) => {
   } = props;
 
   const [resetPassModalVisible, setResetPassModalVisible] = useState(false);
+  const [avatarLoading, setAvatarLoading] = useState(false);
+  const [avatarImageUrl, setAvatarImageUrl] = useState(null);
 
   const showResetPassModal = () => {
     setResetPassModalVisible(true);
@@ -69,6 +77,44 @@ const UserDetail = (props) => {
     });
   });
 
+  const getBase64 = (img, callback) => {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+  };
+
+  const beforeUpload = (file) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      message.error('你只能上传 png / jpeg 格式的头像!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error('图片大小需要小于2MB!');
+    }
+    return isJpgOrPng && isLt2M;
+  };
+
+  const handleAvatarChange = (info) => {
+    if (info.file.status === 'uploading') {
+      setAvatarLoading(true);
+      return;
+    }
+    if (info.file.status === 'done') {
+      getBase64(info.file.originFileObj, (imagrUrl) => {
+        setAvatarImageUrl(imagrUrl);
+        setAvatarLoading(false);
+      });
+    }
+  };
+
+  const uploadButton = (
+    <div>
+      {avatarLoading ? <LoadingOutlined /> : <PlusOutlined />}
+      <div className="ant-upload-text">头像正在上传中...</div>
+    </div>
+  );
+
   const layout = {
     labelCol: { span: 8 },
     wrapperCol: { span: 16 },
@@ -96,13 +142,14 @@ const UserDetail = (props) => {
         company: userInfo.company ? userInfo.company : '',
         avatar: userInfo.avatar ? userInfo.avatar : '',
       });
+      setAvatarImageUrl(userInfo.avatar);
     }
   }, [userInfo, form]);
 
   const onUpdateFormFinish = (values) => {
     console.log('Success:', values);
     const payload = {
-      data: values,
+      data: { ...values, avatar: avatarImageUrl },
       id: userInfo._id,
       uid: userInfo.uid,
     };
@@ -262,6 +309,27 @@ const UserDetail = (props) => {
                   // initialValues={{ remember: true }}
                   onFinish={onUpdateFormFinish}
                 >
+                  <Form.Item label="头像">
+                    <Upload
+                      name="avatar"
+                      listType="picture-card"
+                      className="avatar-uploader"
+                      showUploadList={false}
+                      action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                      beforeUpload={beforeUpload}
+                      onChange={handleAvatarChange}
+                    >
+                      {avatarImageUrl && !avatarLoading ? (
+                        <img
+                          src={avatarImageUrl}
+                          alt="avatar"
+                          style={{ width: '100%' }}
+                        />
+                      ) : (
+                        uploadButton
+                      )}
+                    </Upload>
+                  </Form.Item>
                   <Form.Item
                     label="用户名"
                     name="name"
