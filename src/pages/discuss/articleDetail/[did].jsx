@@ -2,32 +2,25 @@
  * @Author: Wenzhe
  * @Date: 2020-04-30 16:25:16
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-02 16:11:51
+ * @LastEditTime: 2020-05-12 08:29:46
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect, history } from 'umi';
 import { useMount, useUnmount } from '@umijs/hooks';
 import ReactMarkdown from 'react-markdown';
 import 'github-markdown-css';
-import {
-  Table,
-  Alert,
-  Divider,
-  PageHeader,
-  Breadcrumb,
-  Avatar,
-  Button,
-  Tooltip,
-  Comment,
-} from 'antd';
+import { Drawer, Breadcrumb, Avatar, Button, Tooltip, Comment } from 'antd';
 import moment from 'moment';
 import CodeBlock from '../../../components/CodeBlock';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/atom-one-light.css';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
-import styles from './index.less';
+import { ApartmentOutlined } from '@ant-design/icons';
 import { categoryToCN } from '../../../config/discuss_config';
+import { transform } from 'markmap-lib/dist/transform';
+import { Markmap } from 'markmap-lib/dist/view';
+import styles from './index.less';
 
 // 初始化Markdown解析器
 const mdParser = new MarkdownIt({
@@ -54,6 +47,7 @@ const ArticleDetail = (props) => {
   const [commentDetail, setCommentDetail] = useState('');
   const [replyDetail, setReplyDetail] = useState('');
   const [currentCommentReplyBox, setCurrentCommentReplyBox] = useState('');
+  const [mindMapDrawerVisible, setMindMapDrawerVisible] = useState(false);
 
   useMount(() => {
     const { did } = match.params;
@@ -64,6 +58,13 @@ const ArticleDetail = (props) => {
       },
     });
   });
+
+  useEffect(() => {
+    if (discussDetail.detail) {
+      const data = transform(discussDetail.detail);
+      Markmap.create('#markmap', null, data);
+    }
+  }, [discussDetail]);
 
   useUnmount(() => {
     dispatch({
@@ -103,7 +104,13 @@ const ArticleDetail = (props) => {
     setReplyDetail(`@${authorInfo.name} `);
   };
 
-  console.log(discussDetail.comments);
+  const showMapDrawer = () => {
+    setMindMapDrawerVisible(true);
+  };
+
+  const hideMapDrawer = () => {
+    setMindMapDrawerVisible(false);
+  };
 
   return (
     <div className={styles.main}>
@@ -247,6 +254,24 @@ const ArticleDetail = (props) => {
           </div>
         </div>
       </div>
+      <div className={styles.fixedWeight}>
+        <div className={styles.fixedButton} onClick={showMapDrawer}>
+          <ApartmentOutlined />
+        </div>
+      </div>
+      <Drawer
+        width="1200px"
+        title="文章脑图"
+        placement="left"
+        closable={true}
+        onClose={hideMapDrawer}
+        visible={mindMapDrawerVisible}
+        forceRender
+      >
+        <div className={styles.mindMapWrapper}>
+          <svg id="markmap" style={{ width: '1200px', height: '700px' }}></svg>
+        </div>
+      </Drawer>
     </div>
   );
 };
