@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-05-03 19:53:50
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-09 11:29:36
+ * @LastEditTime: 2020-05-13 14:04:53
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -424,7 +424,7 @@ const ContestProblem = (props) => {
                           text={judge_result[submissionInfo.result]}
                         />
                       ) : (
-                        <Badge status="processing" text="Judging..." />
+                        <Badge status="processing" text="判题中..." />
                       )}
                     </Button>
                   </span>

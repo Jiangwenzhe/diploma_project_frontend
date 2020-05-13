@@ -616,7 +616,7 @@ const problemDetail = (props) => {
                       text={judge_result[submissionInfo.result]}
                     />
                   ) : (
-                    <Badge status="processing" text="Judging..." />
+                    <Badge status="processing" text="判题中..." />
                   )}
                 </Button>
               </span>
