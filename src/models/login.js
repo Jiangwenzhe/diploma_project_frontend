@@ -2,10 +2,10 @@
  * @Author: Wenzhe
  * @Date: 2020-04-14 16:30:41
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-13 08:57:54
+ * @LastEditTime: 2020-05-13 09:27:43
  */
 
-import { accountLogin } from '../service/login';
+import { accountLogin, createUserInfo } from '../service/login';
 import { message } from 'antd';
 import { history } from 'umi';
 
@@ -30,10 +30,25 @@ const Model = {
       }
       return response.data.status;
     },
+    *register({ payload }, { call }) {
+      const response = yield call(createUserInfo, payload);
+      if (response.code === 0 && response.data) {
+        message.success('用户添加成功~');
+        return {
+          status: 'success',
+          loginPayload: {
+            name: payload.name,
+            password: payload.password,
+          },
+        };
+      }
+      return undefined;
+    },
     logout(_) {
       // 删除 localStorage
       localStorage.removeItem('node-oj-token');
       history.push('/');
+      location.reload();
     },
   },
   reducers: {

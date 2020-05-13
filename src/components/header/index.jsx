@@ -3,6 +3,7 @@ import { Menu, Row, Col, Avatar, Typography, Button } from 'antd';
 import styles from './index.less';
 import { Link, connect, history } from 'umi';
 import LoginModal from '../loginModal';
+import RegisterModal from '../RegisterModal';
 
 const { Item, SubMenu } = Menu;
 const { Text } = Typography;
@@ -22,9 +23,12 @@ const PageHeader = (props) => {
     user: { currentUser },
     dispatch,
   } = props;
+
   const [loginModelVisible, setLoginModelVisible] = useState(false);
+  const [registerModelVisible, setRegisterModelVisible] = useState(false);
 
   const logout = () => {
+    console.log('logout');
     dispatch({
       type: 'login/logout',
     });
@@ -64,6 +68,7 @@ const PageHeader = (props) => {
                   style={{ marginLeft: '10px' }}
                   type="dashed"
                   size="small"
+                  onClick={() => setRegisterModelVisible(true)}
                 >
                   注册
                 </Button>
@@ -102,6 +107,10 @@ const PageHeader = (props) => {
       <LoginModal
         visible={loginModelVisible}
         hideVisible={() => setLoginModelVisible(false)}
+      />
+      <RegisterModal
+        visible={registerModelVisible}
+        hideVisible={() => setRegisterModelVisible(false)}
       />
     </>
   );
