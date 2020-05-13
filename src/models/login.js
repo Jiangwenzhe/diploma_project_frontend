@@ -2,11 +2,12 @@
  * @Author: Wenzhe
  * @Date: 2020-04-14 16:30:41
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-14 22:30:53
+ * @LastEditTime: 2020-05-13 08:57:54
  */
 
 import { accountLogin } from '../service/login';
 import { message } from 'antd';
+import { history } from 'umi';
 
 const Model = {
   namespace: 'login',
@@ -32,8 +33,8 @@ const Model = {
     logout(_) {
       // 删除 localStorage
       localStorage.removeItem('node-oj-token');
-      location.reload();
-    }
+      history.push('/');
+    },
   },
   reducers: {
     save(state, action) {
