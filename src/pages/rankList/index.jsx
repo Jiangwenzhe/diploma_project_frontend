@@ -7,7 +7,7 @@ const { Search } = Input;
 const RankList = (props) => {
   const {
     dispatch,
-    fetchStatusListLoading,
+    fetchRankListLoading,
     ranklist: { ranklistInfo, total },
   } = props;
 
@@ -139,7 +139,7 @@ const RankList = (props) => {
         onChange={tableChangeHandler}
         dataSource={ranklistInfo}
         pagination={{ ...pagination, total, showSizeChanger: true }}
-        loading={fetchStatusListLoading}
+        loading={fetchRankListLoading}
       />
     </div>
   );
