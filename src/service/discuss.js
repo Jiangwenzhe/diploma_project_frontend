@@ -2,17 +2,17 @@
  * @Author: Wenzhe
  * @Date: 2020-04-22 09:34:08
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-01 22:19:39
+ * @LastEditTime: 2020-05-14 10:14:41
  */
 import request from '@/utils/request';
 
 export async function getDiscussList(params) {
   const {
     pagination: { current, pageSize },
-    query: { category, type, tag },
+    query: { category, type, tag, title },
   } = params;
   return request(
-    `/api/discuss?current=${current}&pageSize=${pageSize}&category=${category}&type=${type}&tag=${tag}`,
+    `/api/discuss?current=${current}&pageSize=${pageSize}&category=${category}&type=${type}&tag=${tag}&title=${title}`,
   );
 }
 

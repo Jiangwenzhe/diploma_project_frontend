@@ -54,9 +54,12 @@ const Discuss = (props) => {
     category: '',
     type: '',
     tag: '',
+    title: '',
   });
   const [pagediscussTags, setPageDiscussTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [search, setSearch] = useState('');
+  const [titleSearch, setTitleSearch] = useState('');
   const [isMy, setIsMy] = useState(false);
   const [myPageHeaderTitle, setMyPageHeaderTitle] = useState('');
   const [discussFormVisible, setDiscussFormVisible] = useState(false);
@@ -104,8 +107,9 @@ const Discuss = (props) => {
       category: currentCategory,
       type: currentType,
       tag: currentTag,
+      title: titleSearch,
     });
-  }, [selectCategory, discussType, selectedTags]);
+  }, [selectCategory, discussType, selectedTags, titleSearch]);
 
   useEffect(() => {
     const { type, category } = communicationQuery;
@@ -241,10 +245,21 @@ const Discuss = (props) => {
     setDiscussFormVisible(false);
   };
 
+  const changeTitleSearch = (e) => {
+    if (e.target.value === '') {
+      setTitleSearch('');
+    }
+    setSearch(e.target.value);
+  };
+
+  const handleTitleSearch = () => {
+    setTitleSearch(search);
+  };
+
   return (
     <div>
-      <Row>
-        <Col span={16} className={styles.shadow}>
+      <Row justify="center">
+        <Col span={17} className={styles.shadow}>
           {isMy ? (
             <>
               <PageHeader
@@ -316,6 +331,15 @@ const Discuss = (props) => {
         </Col>
         <div style={{ width: '270px', marginLeft: '50px' }}>
           <div className={styles.operation}>
+            <div className={styles.searchBox}>
+              <Search
+                placeholder="按标题搜索"
+                onChange={(value) => changeTitleSearch(value)}
+                onSearch={(value) => handleTitleSearch(value)}
+              />
+            </div>
+            <Divider style={{ margin: '15px 0' }} />
+
             <div className={styles.right_upper_wrapper}>
               <div
                 className={styles.icon_wrapper}
@@ -356,7 +380,7 @@ const Discuss = (props) => {
                 </Button>
               </Col>
             </Row>
-            <div style={{ padding: '0 15px' }}>
+            {/* <div style={{ padding: '0 15px' }}>
               <Divider style={{ margin: '15px 0' }} />
             </div>
             <div className={styles.right_panle}>
@@ -374,7 +398,7 @@ const Discuss = (props) => {
                 </span>
                 <RightOutlined />
               </div>
-            </div>
+            </div> */}
           </div>
           {!isMy && (
             <div className={styles.tag_panel}>

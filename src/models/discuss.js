@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 10:51:45
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-02 10:04:52
+ * @LastEditTime: 2020-05-14 10:14:03
  */
 
 import {
@@ -27,6 +27,7 @@ const Model = {
       category: '',
       type: '',
       tag: '',
+      title: '',
     },
   },
   effects: {
