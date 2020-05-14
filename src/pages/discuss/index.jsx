@@ -12,11 +12,7 @@ import {
   Input,
   PageHeader,
 } from 'antd';
-import {
-  PlusOutlined,
-  createFromIconfontCN,
-  RightOutlined,
-} from '@ant-design/icons';
+import { PlusOutlined, createFromIconfontCN } from '@ant-design/icons';
 import { connect } from 'umi';
 import DiscussForm from './discussForm/index';
 import { v4 as uuidv4 } from 'uuid';
