@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 10:51:45
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-14 10:14:03
+ * @LastEditTime: 2020-05-14 13:19:50
  */
 
 import {
@@ -12,6 +12,7 @@ import {
   getDiscussDetail,
   createDiscuss,
   joinDuscuss,
+  getUserCollectDiscuss,
 } from '@/service/discuss';
 
 import { message } from 'antd';
@@ -45,6 +46,18 @@ const Model = {
     },
     *fetchMyDiscussInfo({ payload }, { call, put }) {
       const response = yield call(getMyDiscussInfo, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          discussList: Array.isArray(response.data.list)
+            ? response.data.list
+            : [],
+          total: response.data.total,
+        },
+      });
+    },
+    *fetchUserCollectDiscuss(_, { call, put }) {
+      const response = yield call(getUserCollectDiscuss);
       yield put({
         type: 'save',
         payload: {

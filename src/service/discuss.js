@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-22 09:34:08
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-14 10:14:41
+ * @LastEditTime: 2020-05-14 13:16:32
  */
 import request from '@/utils/request';
 
@@ -14,6 +14,10 @@ export async function getDiscussList(params) {
   return request(
     `/api/discuss?current=${current}&pageSize=${pageSize}&category=${category}&type=${type}&tag=${tag}&title=${title}`,
   );
+}
+
+export async function getUserCollectDiscuss() {
+  return request(`/api/user_discuss`);
 }
 
 export async function getMyDiscussInfo(params) {

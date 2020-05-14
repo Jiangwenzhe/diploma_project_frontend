@@ -221,6 +221,14 @@ const Discuss = (props) => {
     });
   };
 
+  const getMyCollect = () => {
+    setMyPageHeaderTitle('收藏');
+    setIsMy(true);
+    dispatch({
+      type: 'discuss/fetchUserCollectDiscuss',
+    });
+  };
+
   // 从 我的文章 ｜ 我的讨论 ｜ 我的草稿 返回分页获取 discussList
   const cancelMy = () => {
     setIsMy(false);
@@ -351,7 +359,10 @@ const Discuss = (props) => {
                 <IconFont className={styles.icon} type="icon-discussion" />
                 <div>我的讨论</div>
               </div>
-              <div className={styles.icon_wrapper}>
+              <div
+                className={styles.icon_wrapper}
+                onClick={() => getMyCollect()}
+              >
                 <IconFont className={styles.icon} type="icon-collect" />
                 <div>我的收藏</div>
               </div>
