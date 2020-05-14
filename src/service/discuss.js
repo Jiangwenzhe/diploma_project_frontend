@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-22 09:34:08
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-14 13:16:32
+ * @LastEditTime: 2020-05-14 16:00:43
  */
 import request from '@/utils/request';
 
@@ -51,5 +51,19 @@ export async function joinDuscuss(params) {
   return request(`/api/discuss/joindiscuss/${did}`, {
     method: 'POST',
     data: payload,
+  });
+}
+
+export async function userCollectDiscuss(params) {
+  return request(`/api/user_discuss`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+export async function cancelUserCollectDiscuss(params) {
+  const { did } = params;
+  return request(`/api/user_discuss/${did}`, {
+    method: 'DELETE',
   });
 }

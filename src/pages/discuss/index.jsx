@@ -11,6 +11,7 @@ import {
   Menu,
   Input,
   PageHeader,
+  Avatar,
 } from 'antd';
 import { PlusOutlined, createFromIconfontCN } from '@ant-design/icons';
 import { connect } from 'umi';
@@ -263,14 +264,18 @@ const Discuss = (props) => {
   return (
     <div>
       <Row justify="center">
-        <Col span={17} className={styles.shadow}>
+        <Col span={18} className={styles.shadow}>
           {isMy ? (
             <>
               <PageHeader
                 className={styles.my_page_header}
                 onBack={() => cancelMy()}
                 title={`我的${myPageHeaderTitle}`}
-                subTitle={currentUser.name}
+                subTitle={
+                  <>
+                    <span>{currentUser.name}</span>
+                  </>
+                }
               />
             </>
           ) : (
@@ -333,7 +338,7 @@ const Discuss = (props) => {
             </Spin>
           </div>
         </Col>
-        <div style={{ width: '270px', marginLeft: '50px' }}>
+        <div style={{ width: '270px', marginLeft: '30px' }}>
           <div className={styles.operation}>
             <div className={styles.searchBox}>
               <Search

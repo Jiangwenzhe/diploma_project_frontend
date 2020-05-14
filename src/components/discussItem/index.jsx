@@ -2,14 +2,26 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 12:57:33
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-01 22:41:44
+ * @LastEditTime: 2020-05-14 16:10:36
  */
-import React from 'react';
-import { Row, Avatar, Typography, Skeleton } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Row, Avatar, Typography, Skeleton, Col } from 'antd';
+import { connect } from 'umi';
 import { history } from 'umi';
 import styles from './index.less';
 import { CommentOutlined } from '@ant-design/icons';
 import { categoryToCN } from '../../config/discuss_config';
+import {
+  PlusOutlined,
+  createFromIconfontCN,
+  HeartFilled,
+  HeartOutlined,
+} from '@ant-design/icons';
+import icon_font_url from '../../config/iconfont';
+
+const IconFont = createFromIconfontCN({
+  scriptUrl: icon_font_url,
+});
 
 const { Paragraph } = Typography;
 
@@ -18,7 +30,13 @@ const isDiscussOrArticle = (type) => {
 };
 
 const DiscussItem = (props) => {
-  const { discussInfo, clickCategoryFnc } = props;
+  const {
+    discussInfo,
+    clickCategoryFnc,
+    dispatch,
+    discuss,
+    user: { currentUser },
+  } = props;
   const {
     authorInfo,
     title,
@@ -31,6 +49,13 @@ const DiscussItem = (props) => {
     discussList,
   } = discussInfo;
 
+  const [isHovering, setIsHovering] = useState(false);
+  const [isCollected, setIsCollected] = useState(false);
+
+  const handleMouseHover = () => {
+    setIsHovering(!isHovering);
+  };
+
   const pushDiscuss = () => {
     if (type === 'article') {
       return history.push(`/discuss/articleDetail/${_id}`);
@@ -38,6 +63,34 @@ const DiscussItem = (props) => {
     if (type === 'discuss') {
       return history.push(`/discuss/discussDetail/${_id}`);
     }
+  };
+
+  useEffect(() => {
+    if (currentUser.uid && currentUser.collect_list.length > 0) {
+      if (currentUser.collect_list.includes(_id)) {
+        setIsCollected(true);
+      }
+    }
+  }, [currentUser, _id]);
+
+  const collectDiscuss = () => {
+    setIsCollected(true);
+    dispatch({
+      type: 'discuss/userCollectDiscuss',
+      payload: {
+        did: _id,
+      },
+    });
+  };
+
+  const cancelCollectDiscuss = () => {
+    setIsCollected(false);
+    dispatch({
+      type: 'discuss/cancelUserCollectDiscuss',
+      payload: {
+        did: _id,
+      },
+    });
   };
 
   return (
@@ -85,13 +138,40 @@ const DiscussItem = (props) => {
               {detail}
             </Paragraph>
           </Row>
-          <Row className={styles.action} align="middle">
-            <CommentOutlined />
-            <span className={styles.comment}>
-              {type === 'discuss'
-                ? `${discussList.length} 条讨论`
-                : `${comments.length} 条评论`}
-            </span>
+          <Row
+            className={styles.action}
+            align="middle"
+            onMouseEnter={handleMouseHover}
+            onMouseLeave={handleMouseHover}
+          >
+            <Col span={2}>
+              <CommentOutlined />
+              <span className={styles.comment}>
+                {type === 'discuss'
+                  ? `${discussList.length} 条讨论`
+                  : `${comments.length} 条评论`}
+              </span>
+            </Col>
+            <Col span={2} style={{ marginLeft: '10px' }}>
+              {isCollected ? (
+                <span>
+                  <span
+                    className={styles.collect}
+                    onClick={cancelCollectDiscuss}
+                  >
+                    <HeartFilled />
+                    <span className={styles.comment}>已收藏</span>
+                  </span>
+                </span>
+              ) : (
+                <span className={styles.hide}>
+                  <span className={styles.collect} onClick={collectDiscuss}>
+                    <HeartOutlined />
+                    <span className={styles.comment}>我的收藏</span>
+                  </span>
+                </span>
+              )}
+            </Col>
           </Row>
         </>
       ) : (
@@ -101,4 +181,9 @@ const DiscussItem = (props) => {
   );
 };
 
-export default DiscussItem;
+export default connect(({ discuss, user, loading }) => ({
+  discuss,
+  user,
+  // fetchMyDiscussInfoLoading: loading.effects['discuss/fetchMyDiscussInfo'],
+  // fetchDiscussListLoading: loading.effects['discuss/fetchDiscussList'],
+}))(DiscussItem);

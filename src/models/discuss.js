@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 10:51:45
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-14 13:19:50
+ * @LastEditTime: 2020-05-14 16:09:42
  */
 
 import {
@@ -13,6 +13,8 @@ import {
   createDiscuss,
   joinDuscuss,
   getUserCollectDiscuss,
+  userCollectDiscuss,
+  cancelUserCollectDiscuss,
 } from '@/service/discuss';
 
 import { message } from 'antd';
@@ -107,6 +109,24 @@ const Model = {
           payload: { did: payload.did },
         });
         return 'success';
+      }
+    },
+    *userCollectDiscuss({ payload }, { call }) {
+      const response = yield call(userCollectDiscuss, payload);
+      if (response.data && response.data === '用户添加收藏成功') {
+        message.success('添加收藏成功');
+      }
+    },
+    *cancelUserCollectDiscuss({ payload }, { call, put }) {
+      const response = yield call(cancelUserCollectDiscuss, payload);
+      if (response.data && response.data === '用户取消收藏成功') {
+        message.success('用户取消收藏成功');
+        yield put({
+          type: 'fetchUserCollectDiscuss',
+        });
+        yield put({
+          type: 'user/fetchCurrent',
+        });
       }
     },
     *changeCommunicationQuery({ payload }, { put }) {
