@@ -12,13 +12,22 @@ import {
   Progress,
 } from 'antd';
 import { useMount, useUnmount } from '@umijs/hooks';
-import { connect, Link } from 'umi';
+import { connect, Link, history } from 'umi';
 import Countdown from 'react-countdown';
 import moment from 'moment';
 import styles from './index.less';
 import { makeReverseStrokeColor } from '../../config/contest_config';
 
 const { Title, Paragraph } = Typography;
+
+const pushDiscuss = (type, _id) => {
+  if (type === 'article') {
+    return history.push(`/discuss/articleDetail/${_id}`);
+  }
+  if (type === 'discuss') {
+    return history.push(`/discuss/discussDetail/${_id}`);
+  }
+};
 
 const makeContestTypeTag = (need_pass) => {
   if (need_pass) {
@@ -56,6 +65,7 @@ const contestStatus = (startTime, endTime) => {
 };
 
 const renderDiscuss = (info) => {
+  console.log(info);
   return (
     <div className={styles.discussMain}>
       <div key={info._id} className={styles.discussItemHeader}>
@@ -64,17 +74,25 @@ const renderDiscuss = (info) => {
             <Avatar
               src={info.authorInfo.avatar}
               size={22}
-              onClick={() => history.push(`/user/${authorInfo.uid}`)}
+              onClick={() => history.push(`/user/${info.authorInfo.uid}`)}
               style={{ cursor: 'pointer' }}
             />
           </span>
-          <span className={styles.click_title}>{info.title}</span>
+          <span
+            className={styles.click_title}
+            onClick={() => pushDiscuss(info.type, info._id)}
+          >
+            {info.title}
+          </span>
         </span>
         <span className={styles.drak}>
           {moment(info.createdAt).format('YYYY-MM-DD')}
         </span>
       </div>
-      <div style={{ marginLeft: '10px' }}>
+      <div
+        style={{ marginLeft: '10px' }}
+        onClick={() => pushDiscuss(info.type, info._id)}
+      >
         <Paragraph ellipsis={{ rows: 2 }}>{info.detail}</Paragraph>
       </div>
     </div>
@@ -90,15 +108,23 @@ const renderHot = (info) => {
             <Avatar
               src={info.authorInfo.avatar}
               size={22}
-              onClick={() => history.push(`/user/${authorInfo.uid}`)}
+              onClick={() => history.push(`/user/${info.authorInfo.uid}`)}
               style={{ cursor: 'pointer' }}
             />
           </span>
-          <span className={styles.click_title}>{info.title}</span>
+          <span
+            className={styles.click_title}
+            onClick={() => pushDiscuss(info.type, info._id)}
+          >
+            {info.title}
+          </span>
         </span>
         <span className={styles.drak}>{`${info.access_number} 次阅读`}</span>
       </div>
-      <div style={{ marginLeft: '10px' }}>
+      <div
+        style={{ marginLeft: '10px' }}
+        onClick={() => pushDiscuss(info.type, info._id)}
+      >
         <Paragraph ellipsis={{ rows: 2 }}>{info.detail}</Paragraph>
       </div>
     </div>
@@ -114,7 +140,10 @@ const renderContest = (info) => {
   )._milliseconds;
   const percent = (rest_time / total_time) * 100;
   return (
-    <div className={styles.contestMain}>
+    <div
+      className={styles.contestMain}
+      onClick={() => history.push('/contest')}
+    >
       <div className={styles.contest_header}>
         <span className={styles.contest_title}>{info.title}</span>
         <span>

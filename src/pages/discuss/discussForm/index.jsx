@@ -77,7 +77,6 @@ const DiscussForm = (props) => {
   }, [discussTags]);
 
   useEffect(() => {
-    console.log(discussFormVisible);
     if (discussFormVisible) {
       if (type === 'article') {
         setFormDetail(article_template);

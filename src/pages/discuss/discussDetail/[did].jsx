@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-30 16:25:16
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-02 20:11:28
+ * @LastEditTime: 2020-05-14 16:28:15
  */
 import React, { useState } from 'react';
 import { connect, history } from 'umi';
@@ -141,7 +141,7 @@ const DiscussDetail = (props) => {
 
   return (
     <div>
-      <Row>
+      <Row justify="center">
         <Col span={18}>
           <div className={[styles.shadow, styles.main_discuss_panel].join(' ')}>
             <div className={styles.detail_header}>

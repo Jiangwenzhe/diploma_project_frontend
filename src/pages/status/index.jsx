@@ -69,21 +69,22 @@ const StatusList = (props) => {
     {
       title: 'CPU 用时',
       render: (record) => {
-        if (record.result === -2) return '/';
+        if (record.result === -2 || !('result' in record)) return '/';
         return record.status_info.cpu_time_cost;
       },
     },
     {
       title: '执行用时',
       render: (record) => {
-        if (record.result === -2) return '/';
+        console.log(record._id);
+        if (record.result === -2 || !('result' in record)) return '/';
         return record.status_info.real_time__cost;
       },
     },
     {
       title: '内存消耗',
       render: (record) => {
-        if (record.result === -2) return '/';
+        if (record.result === -2 || !('result' in record)) return '/';
         return `${BtoMB(record.status_info.memory_cost)} MB`;
       },
     },
