@@ -11,7 +11,6 @@ import {
   Menu,
   Input,
   PageHeader,
-  Avatar,
 } from 'antd';
 import { PlusOutlined, createFromIconfontCN } from '@ant-design/icons';
 import { connect } from 'umi';
