@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 10:51:45
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-14 16:09:42
+ * @LastEditTime: 2020-05-19 15:54:02
  */
 
 import {
@@ -121,9 +121,10 @@ const Model = {
       const response = yield call(cancelUserCollectDiscuss, payload);
       if (response.data && response.data === '用户取消收藏成功') {
         message.success('用户取消收藏成功');
-        yield put({
-          type: 'fetchUserCollectDiscuss',
-        });
+        // 还是不要直接获取数据好 。。。
+        // yield put({
+        //   type: 'fetchUserCollectDiscuss',
+        // });
         yield put({
           type: 'user/fetchCurrent',
         });
