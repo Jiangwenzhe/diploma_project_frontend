@@ -2,17 +2,19 @@
  * @Author: Wenzhe
  * @Date: 2020-03-20 13:49:05
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-05 20:22:33
+ * @LastEditTime: 2020-05-19 13:51:18
  */
 import { defineConfig } from 'umi';
 
 export default defineConfig({
+  // ssr: {},
   title: 'Node OJ',
   theme: {
     // '@primary-color': '#16a085',
     '@border-radius-base': '4px',
   },
   history: { type: 'hash' },
+  // history: { type: 'browser' },
   antd: {
     // dark: true,
   },
