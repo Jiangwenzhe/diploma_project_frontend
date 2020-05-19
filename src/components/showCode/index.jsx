@@ -7,7 +7,7 @@ import { atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 // * java
 // * python
 
-const convert_language = language => {
+const convert_language = (language) => {
   if (language === 'Python2' || language === 'Python3') {
     return 'python';
   }
@@ -19,7 +19,7 @@ const convert_language = language => {
   }
 };
 
-const showCode = props => {
+const showCode = (props) => {
   const { code, language } = props;
 
   return (
@@ -35,4 +35,4 @@ const showCode = props => {
   );
 };
 
-export default showCode;
+export default React.memo(showCode);

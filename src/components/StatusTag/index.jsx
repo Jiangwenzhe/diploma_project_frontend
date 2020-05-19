@@ -4,6 +4,9 @@ import { judge_result } from '../../config/judge_result';
 
 const StatusTag = (props) => {
   const { status } = props;
+  if (status === undefined) {
+    return <Tag color="#13c2c2">Judging</Tag>;
+  }
   if (status === 0) {
     return <Tag color="#52c41a">{judge_result[status]}</Tag>;
   }
@@ -13,4 +16,4 @@ const StatusTag = (props) => {
   return <Tag color="#faad14">{judge_result[status]}</Tag>;
 };
 
-export default StatusTag;
+export default React.memo(StatusTag);

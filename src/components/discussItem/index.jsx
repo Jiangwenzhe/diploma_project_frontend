@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 12:57:33
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-14 16:10:36
+ * @LastEditTime: 2020-05-19 15:54:54
  */
 import React, { useState, useEffect } from 'react';
 import { Row, Avatar, Typography, Skeleton, Col } from 'antd';
@@ -11,17 +11,7 @@ import { history } from 'umi';
 import styles from './index.less';
 import { CommentOutlined } from '@ant-design/icons';
 import { categoryToCN } from '../../config/discuss_config';
-import {
-  PlusOutlined,
-  createFromIconfontCN,
-  HeartFilled,
-  HeartOutlined,
-} from '@ant-design/icons';
-import icon_font_url from '../../config/iconfont';
-
-const IconFont = createFromIconfontCN({
-  scriptUrl: icon_font_url,
-});
+import { HeartFilled, HeartOutlined } from '@ant-design/icons';
 
 const { Paragraph } = Typography;
 
@@ -34,7 +24,6 @@ const DiscussItem = (props) => {
     discussInfo,
     clickCategoryFnc,
     dispatch,
-    discuss,
     user: { currentUser },
   } = props;
   const {
@@ -186,4 +175,4 @@ export default connect(({ discuss, user, loading }) => ({
   user,
   // fetchMyDiscussInfoLoading: loading.effects['discuss/fetchMyDiscussInfo'],
   // fetchDiscussListLoading: loading.effects['discuss/fetchDiscussList'],
-}))(DiscussItem);
+}))(React.memo(DiscussItem));

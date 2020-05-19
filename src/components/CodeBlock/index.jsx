@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
@@ -12,4 +12,4 @@ const CodeBlock = (props) => {
   );
 };
 
-export default CodeBlock;
+export default memo(CodeBlock);

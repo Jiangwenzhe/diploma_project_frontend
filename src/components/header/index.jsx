@@ -119,4 +119,4 @@ const PageHeader = (props) => {
 export default connect(({ user, login }) => ({
   user,
   login,
-}))(PageHeader);
+}))(React.memo(PageHeader));
