@@ -43,7 +43,6 @@ const difficultyToTag = (difficulty) => {
 };
 
 const makeUserProgressChartData = (currentUser) => {
-  console.log(currentUser);
   if (!currentUser) return [{ name: '123', value: '12312' }];
   if (Object.keys(currentUser).length !== 0) {
     const {
@@ -52,7 +51,6 @@ const makeUserProgressChartData = (currentUser) => {
       problemListCount,
       failed_list,
     } = currentUser;
-    // console.log(solved_list);
     return [
       {
         name: '已解答:',
@@ -93,10 +91,13 @@ const ProblemList = (props) => {
   const [selectedTags, setSelectedTags] = useState([]);
 
   useEffect(() => {
-    request('/api/problemtag').then((response) => {
+    const fetchTags = async () => {
+      const response = await request('/api/problemtag');
+      console.log('response', response);
       const tagValue = response.data.map((item) => item.name);
       setTags(tagValue);
-    });
+    };
+    fetchTags();
   }, []);
 
   useEffect(() => {
@@ -126,7 +127,6 @@ const ProblemList = (props) => {
   };
 
   const hadnleDifficultySelect = (value) => {
-    console.log(value);
     if (!value) {
       setQuery({ ...query, difficulty: '' });
       return;
@@ -135,8 +135,6 @@ const ProblemList = (props) => {
   };
 
   const handleProblemTagSelected = (tag, checked) => {
-    console.log(tag, checked);
-    // const
     const nextSelectedTags = checked
       ? [...selectedTags, tag]
       : selectedTags.filter((t) => t !== tag);
