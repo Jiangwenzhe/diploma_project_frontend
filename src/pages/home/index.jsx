@@ -65,10 +65,9 @@ const contestStatus = (startTime, endTime) => {
 };
 
 const renderDiscuss = (info) => {
-  console.log(info);
   return (
-    <div className={styles.discussMain}>
-      <div key={info._id} className={styles.discussItemHeader}>
+    <div key={info._id} className={styles.discussMain}>
+      <div className={styles.discussItemHeader}>
         <span>
           <span>
             <Avatar
@@ -101,8 +100,8 @@ const renderDiscuss = (info) => {
 
 const renderHot = (info) => {
   return (
-    <div className={styles.discussMain}>
-      <div key={info._id} className={styles.discussItemHeader}>
+    <div key={info._id} className={styles.discussMain}>
+      <div className={styles.discussItemHeader}>
         <span>
           <span>
             <Avatar
@@ -141,6 +140,7 @@ const renderContest = (info) => {
   const percent = (rest_time / total_time) * 100;
   return (
     <div
+      key={info._id}
       className={styles.contestMain}
       onClick={() => history.push('/contest')}
     >
@@ -175,8 +175,6 @@ const Home = (props) => {
       homeInfo: { contest, hot, news },
     },
   } = props;
-
-  console.log(contest);
 
   useMount(() => {
     dispatch({
