@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-15 08:24:32
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-08 09:58:33
+ * @LastEditTime: 2020-05-20 22:37:39
  */
 import request from '@/utils/request';
 
@@ -11,7 +11,6 @@ export async function getProlebmList(params) {
     pagination: { current, pageSize },
     query: { title, difficulty, tag },
   } = params;
-  console.log(difficulty);
   // if (title) {
   //   return request(
   //     `/api/problem?current=${current}&pageSize=${pageSize}&title=${title}&visible=true`,
