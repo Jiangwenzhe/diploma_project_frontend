@@ -60,6 +60,7 @@ const Discuss = (props) => {
   const [myPageHeaderTitle, setMyPageHeaderTitle] = useState('');
   const [discussFormVisible, setDiscussFormVisible] = useState(false);
   const [discussFormType, setDiscussFormType] = useState('');
+  const [isDiscussFormUpdate, setIsDiscussFormUpdate] = useState(false);
 
   // '', 'interview/面试', 'algorithm/数据结构与算法', 'question/题目讨论'， 'work/工作', 'news/新闻', 'feedback/反馈'
   const categories = [
@@ -323,6 +324,7 @@ const Discuss = (props) => {
                     handleChangeCategoryAndTypefromChildComponents
                   }
                   discussInfo={discuss}
+                  refetchDiscussList={refetchDiscussList}
                 />
               ))}
               <Pagination
@@ -446,6 +448,7 @@ const Discuss = (props) => {
         handleHideDiscussForm={hideDiscussForm}
         discussTags={discussTags}
         refetchDiscussList={refetchDiscussList}
+        isUpdate={isDiscussFormUpdate}
       />
     </div>
   );

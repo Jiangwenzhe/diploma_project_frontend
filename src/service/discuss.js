@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-22 09:34:08
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-14 16:00:43
+ * @LastEditTime: 2020-06-06 14:44:11
  */
 import request from '@/utils/request';
 
@@ -64,6 +64,12 @@ export async function userCollectDiscuss(params) {
 export async function cancelUserCollectDiscuss(params) {
   const { did } = params;
   return request(`/api/user_discuss/${did}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function deleteDiscuss(params) {
+  return request(`/api/discuss/${params.id}`, {
     method: 'DELETE',
   });
 }

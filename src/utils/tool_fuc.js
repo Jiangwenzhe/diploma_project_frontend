@@ -2,8 +2,10 @@
  * @Author: Wenzhe
  * @Date: 2020-04-21 10:48:38
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-30 12:49:13
+ * @LastEditTime: 2020-06-06 14:29:03
  */
+
+import { v4 as uuidv4 } from 'uuid';
 
 //  bit 转 mb 的函数
 const BtoMB = (param) => Math.round(param / (1024 * 1024));
@@ -19,4 +21,8 @@ const inverseFilter = (arr, query) => {
   );
 };
 
-export { BtoMB, filterItem, inverseFilter };
+const makeRandomListKey = () => {
+  return uuidv4();
+};
+
+export { BtoMB, filterItem, inverseFilter, makeRandomListKey };

@@ -2,18 +2,29 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 12:57:33
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-06-06 14:06:24
+ * @LastEditTime: 2020-06-06 14:45:02
  */
 import React, { useState, useEffect } from 'react';
-import { Row, Avatar, Typography, Skeleton, Popover, Button, Tag } from 'antd';
+import {
+  Row,
+  Avatar,
+  Typography,
+  Skeleton,
+  Popover,
+  Button,
+  Modal,
+  Popconfirm,
+} from 'antd';
 import { connect } from 'umi';
 import { history } from 'umi';
 import styles from './index.less';
 import { CommentOutlined } from '@ant-design/icons';
 import { categoryToCN } from '../../config/discuss_config';
+import { makeRandomListKey } from '../../utils/tool_fuc';
 import { HeartFilled, HeartOutlined } from '@ant-design/icons';
 
 const { Paragraph } = Typography;
+const { confirm } = Modal;
 
 const isDiscussOrArticle = (type) => {
   return type === 'article' ? '发表了文章' : '发起了讨论';
@@ -25,6 +36,7 @@ const DiscussItem = (props) => {
     clickCategoryFnc,
     dispatch,
     user: { currentUser },
+    refetchDiscussList,
   } = props;
   const {
     authorInfo,
@@ -83,7 +95,17 @@ const DiscussItem = (props) => {
     });
   };
 
-  console.log(tags);
+  const deleteUserDiscuss = async (_id) => {
+    const result = await dispatch({
+      type: 'discuss/deleteDiscuss',
+      payload: {
+        id: _id,
+      },
+    });
+    if (result === 'delete_success') {
+      refetchDiscussList();
+    }
+  };
 
   return (
     <div className={styles.discuss}>
@@ -109,14 +131,30 @@ const DiscussItem = (props) => {
               </span>
             </span>
             <span>
-              {tags.map((tag, index) => (
-                <span>
-                  <span className={styles.tag} key={tag}>
-                    {tag}
+              {tags.map((tag, index) => {
+                if (index > 1) {
+                  return (
+                    <Popover
+                      placement="top"
+                      title={'所有 tag '}
+                      content={tags.map((tag) => (
+                        <span key={makeRandomListKey()}>
+                          <span className={styles.tag}>{tag}</span>
+                          <span style={{ marginRight: '6px' }} />
+                        </span>
+                      ))}
+                    >
+                      ...
+                    </Popover>
+                  );
+                }
+                return (
+                  <span key={makeRandomListKey()}>
+                    <span className={styles.tag}>{tag}</span>
+                    <span style={{ marginRight: '6px' }} />
                   </span>
-                  <span style={{ marginRight: '5px' }} />
-                </span>
-              ))}
+                );
+              })}
             </span>
           </Row>
           <Row className={styles.info} align="middle">
@@ -184,9 +222,16 @@ const DiscussItem = (props) => {
                                 <Button type="text" size="small">
                                   编辑
                                 </Button>
-                                <Button type="text" size="small" danger>
-                                  删除
-                                </Button>
+                                <Popconfirm
+                                  title="您确定要删除当前内容吗？"
+                                  onConfirm={() => deleteUserDiscuss(_id)}
+                                  okText="删除"
+                                  cancelText="取消"
+                                >
+                                  <Button type="text" size="small" danger>
+                                    删除
+                                  </Button>
+                                </Popconfirm>
                               </>
                             }
                           >
@@ -211,9 +256,16 @@ const DiscussItem = (props) => {
                               <Button type="text" size="small">
                                 编辑
                               </Button>
-                              <Button type="text" size="small" danger>
-                                删除
-                              </Button>
+                              <Popconfirm
+                                title="您确定要删除当前内容吗？"
+                                onConfirm={() => deleteUserDiscuss(_id)}
+                                okText="删除"
+                                cancelText="取消"
+                              >
+                                <Button type="text" size="small" danger>
+                                  删除
+                                </Button>
+                              </Popconfirm>
                             </>
                           }
                         >
