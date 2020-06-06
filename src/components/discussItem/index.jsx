@@ -2,10 +2,10 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 12:57:33
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-19 15:54:54
+ * @LastEditTime: 2020-06-06 14:06:24
  */
 import React, { useState, useEffect } from 'react';
-import { Row, Avatar, Typography, Skeleton, Col } from 'antd';
+import { Row, Avatar, Typography, Skeleton, Popover, Button, Tag } from 'antd';
 import { connect } from 'umi';
 import { history } from 'umi';
 import styles from './index.less';
@@ -36,6 +36,7 @@ const DiscussItem = (props) => {
     _id,
     access_number,
     discussList,
+    tags,
   } = discussInfo;
 
   const [isHovering, setIsHovering] = useState(false);
@@ -82,22 +83,40 @@ const DiscussItem = (props) => {
     });
   };
 
+  console.log(tags);
+
   return (
     <div className={styles.discuss}>
       {title ? (
         <>
-          <Row align="middle" style={{ height: '24px' }}>
-            <Avatar
-              src={authorInfo.avatar}
-              size={22}
-              onClick={() => history.push(`/user/${authorInfo.uid}`)}
-              style={{ cursor: 'pointer' }}
-            />
-            <span
-              className={styles.discuss_title}
-              onClick={() => pushDiscuss()}
-            >
-              {title}
+          <Row
+            align="middle"
+            style={{ height: '24px' }}
+            justify="space-between"
+          >
+            <span>
+              <Avatar
+                src={authorInfo.avatar}
+                size={22}
+                onClick={() => history.push(`/user/${authorInfo.uid}`)}
+                style={{ cursor: 'pointer' }}
+              />
+              <span
+                className={styles.discuss_title}
+                onClick={() => pushDiscuss()}
+              >
+                {title}
+              </span>
+            </span>
+            <span>
+              {tags.map((tag, index) => (
+                <span>
+                  <span className={styles.tag} key={tag}>
+                    {tag}
+                  </span>
+                  <span style={{ marginRight: '5px' }} />
+                </span>
+              ))}
             </span>
           </Row>
           <Row className={styles.info} align="middle">
@@ -133,34 +152,79 @@ const DiscussItem = (props) => {
             onMouseEnter={handleMouseHover}
             onMouseLeave={handleMouseHover}
           >
-            <Col span={2}>
+            <div className={styles.inline_block}>
               <CommentOutlined />
               <span className={styles.comment}>
                 {type === 'discuss'
                   ? `${discussList.length} 条讨论`
                   : `${comments.length} 条评论`}
               </span>
-            </Col>
-            <Col span={2} style={{ marginLeft: '10px' }}>
-              {isCollected ? (
-                <span>
-                  <span
-                    className={styles.collect}
-                    onClick={cancelCollectDiscuss}
-                  >
-                    <HeartFilled />
-                    <span className={styles.comment}>已收藏</span>
+            </div>
+            {currentUser.uid && (
+              <div
+                className={styles.inline_block}
+                style={{ marginLeft: '15px' }}
+              >
+                {isCollected ? (
+                  <span>
+                    <span
+                      className={styles.collect}
+                      onClick={cancelCollectDiscuss}
+                    >
+                      <HeartFilled />
+                      <span className={styles.comment}>已收藏</span>
+                    </span>
+                    <span className={styles.hide}>
+                      {authorInfo.uid === currentUser.uid && (
+                        <span className={styles.ellipsis_aciton}>
+                          <Popover
+                            placement="top"
+                            content={
+                              <>
+                                <Button type="text" size="small">
+                                  编辑
+                                </Button>
+                                <Button type="text" size="small" danger>
+                                  删除
+                                </Button>
+                              </>
+                            }
+                          >
+                            <span className={styles.collect}>•••</span>
+                          </Popover>
+                        </span>
+                      )}
+                    </span>
                   </span>
-                </span>
-              ) : (
-                <span className={styles.hide}>
-                  <span className={styles.collect} onClick={collectDiscuss}>
-                    <HeartOutlined />
-                    <span className={styles.comment}>我的收藏</span>
+                ) : (
+                  <span className={styles.hide}>
+                    <span className={styles.collect} onClick={collectDiscuss}>
+                      <HeartOutlined />
+                      <span className={styles.comment}>我的收藏</span>
+                    </span>
+                    {authorInfo.uid === currentUser.uid && (
+                      <span className={styles.ellipsis_aciton}>
+                        <Popover
+                          placement="top"
+                          content={
+                            <>
+                              <Button type="text" size="small">
+                                编辑
+                              </Button>
+                              <Button type="text" size="small" danger>
+                                删除
+                              </Button>
+                            </>
+                          }
+                        >
+                          <span className={styles.collect}>•••</span>
+                        </Popover>
+                      </span>
+                    )}
                   </span>
-                </span>
-              )}
-            </Col>
+                )}
+              </div>
+            )}
           </Row>
         </>
       ) : (
@@ -170,9 +234,7 @@ const DiscussItem = (props) => {
   );
 };
 
-export default connect(({ discuss, user, loading }) => ({
+export default connect(({ discuss, user }) => ({
   discuss,
   user,
-  // fetchMyDiscussInfoLoading: loading.effects['discuss/fetchMyDiscussInfo'],
-  // fetchDiscussListLoading: loading.effects['discuss/fetchDiscussList'],
 }))(React.memo(DiscussItem));
