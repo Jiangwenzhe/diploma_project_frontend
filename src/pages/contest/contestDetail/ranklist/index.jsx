@@ -39,7 +39,10 @@ const defaultColumns = [
   {
     title: '用户名',
     dataIndex: 'userInfo',
-    render: (userInfo) => <>{userInfo.name}</>,
+    render: (userInfo) => {
+      if (!userInfo) return '「用户已注销」';
+      return <>{userInfo.name || 'xsa'}</>;
+    },
   },
   {
     title: '已解决',
@@ -69,8 +72,8 @@ const makeColumns = (problemList) => {
         const { ac_time, is_first_ac, wa_count } = record.list[index][
           problem.pid
         ];
-        console.log(record.list[index]);
-        console.log(problem.pid);
+        // console.log(record.list[index]);
+        // console.log(problem.pid);
         if (ac_time) {
           return (
             <span style={{ color: is_first_ac ? 'blue' : 'green' }}>

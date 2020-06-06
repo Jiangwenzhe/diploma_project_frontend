@@ -2,13 +2,26 @@
  * @Author: Wenzhe
  * @Date: 2020-03-20 13:49:05
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-19 13:51:18
+ * @LastEditTime: 2020-05-25 16:27:59
  */
 import { defineConfig } from 'umi';
 
 export default defineConfig({
   // ssr: {},
   title: 'Node OJ',
+  // qiankun: {
+  //   // 子应用信息
+  //   master: {
+  //     apps: [
+  //       {
+  //         name: 'admin', // 唯一 id
+  //         entry: '//localhost:8001', // html entry
+  //         base: '/admin', // app1 的路由前缀，通过这个前缀判断是否要启动该应用，通常跟子应用的 base 保持一致
+  //         history: 'hash', // 子应用的 history 配置，默认为当前主应用 history 配置
+  //       },
+  //     ]
+  //   }
+  // },
   theme: {
     // '@primary-color': '#16a085',
     '@border-radius-base': '4px',
@@ -27,6 +40,7 @@ export default defineConfig({
   },
   routes: [
     // { path: '/', component: '@/pages/index' },
+    // { path: '/admin', exact: true, component: '@/pages/admin' },
     {
       path: '/',
       component: '@/layouts/index',

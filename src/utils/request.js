@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-03-26 09:53:05
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-04-18 10:39:53
+ * @LastEditTime: 2020-05-21 15:15:49
  */
 /**
  * request 网络请求工具
@@ -32,7 +32,7 @@ const codeMessage = {
  * 异常处理程序
  */
 
-const errorHandler = error => {
+const errorHandler = (error) => {
   const { response } = error;
 
   if (response && response.status) {
@@ -74,7 +74,7 @@ request.interceptors.request.use((url, options) => {
   };
 });
 
-request.interceptors.response.use(response => {
+request.interceptors.response.use((response) => {
   return response;
 });
 
