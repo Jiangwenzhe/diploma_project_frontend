@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 10:51:45
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-06-07 18:40:05
+ * @LastEditTime: 2020-06-07 19:33:33
  */
 
 import {
@@ -17,6 +17,7 @@ import {
   cancelUserCollectDiscuss,
   deleteDiscuss,
   createComment,
+  deleteComment,
 } from '@/service/discuss';
 
 import { message } from 'antd';
@@ -139,10 +140,17 @@ const Model = {
         });
       }
     },
-    *createComment({ payload }, { call, put }) {
+    *createComment({ payload }, { call }) {
       const response = yield call(createComment, payload);
       if (response.data && response.data === '评论添加成功') {
         return 'comment_success';
+      }
+    },
+    *deleteComment({ payload }, { call }) {
+      const response = yield call(deleteComment, payload);
+      if (response.data && response.data === '删除评论成功') {
+        message.success('删除评论成功');
+        return 'delete_comment_success';
       }
     },
     *changeCommunicationQuery({ payload }, { put }) {

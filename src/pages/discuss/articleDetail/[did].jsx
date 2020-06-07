@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-30 16:25:16
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-06-07 18:50:14
+ * @LastEditTime: 2020-06-07 19:34:09
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { connect, history } from 'umi';
@@ -50,6 +50,7 @@ const ArticleDetail = (props) => {
     match,
     dispatch,
     discuss: { discussDetail },
+    user: { currentUser },
     fetchDiscussDetailLoading,
   } = props;
 
@@ -136,6 +137,29 @@ const ArticleDetail = (props) => {
       },
     });
     if (res === 'comment_success') {
+      setCommentDetail('');
+      await dispatch({
+        type: 'discuss/fetchDiscussDetail',
+        payload: {
+          did,
+        },
+      });
+      window.scrollTo({
+        behavior: 'auto',
+        top: commentPositionRef.current.offsetTop,
+      });
+    }
+  };
+
+  const deleteComment = async (id) => {
+    const { did } = match.params;
+    const res = await dispatch({
+      type: 'discuss/deleteComment',
+      payload: {
+        id,
+      },
+    });
+    if (res === 'delete_comment_success') {
       setCommentDetail('');
       await dispatch({
         type: 'discuss/fetchDiscussDetail',
@@ -269,6 +293,16 @@ const ArticleDetail = (props) => {
                         >
                           回复
                         </span>,
+                        <span key="comment-list-reply-to-1">
+                          {currentUser._id === comment.comment_user_id && (
+                            <span
+                              key="comment-list-reply-to-2"
+                              onClick={() => deleteComment(comment._id)}
+                            >
+                              删除
+                            </span>
+                          )}
+                        </span>,
                       ]}
                       key={comment._id}
                       className={[styles.comment].join(' ')}
@@ -358,7 +392,8 @@ const ArticleDetail = (props) => {
   );
 };
 
-export default connect(({ discuss, loading }) => ({
+export default connect(({ discuss, loading, user }) => ({
   discuss,
+  user,
   fetchDiscussDetailLoading: loading.effects['discuss/fetchDiscussDetail'],
 }))(ArticleDetail);
