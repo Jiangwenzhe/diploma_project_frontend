@@ -2,15 +2,18 @@
  * @Author: Wenzhe
  * @Date: 2020-04-25 16:36:55
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-11 16:23:47
+ * @LastEditTime: 2020-06-07 13:07:48
  */
 import { fetchUserInfo, updateUserInfo } from '@/service/userInfo';
+import { getStatusList } from '@/service/status';
 import { message } from 'antd';
 
 const Model = {
   namespace: 'userInfo',
   state: {
     userInfo: {},
+    userSubmissionList: [],
+    userSubmissionTotal: 0,
   },
   effects: {
     *fetchUserInfo({ payload }, { call, put }) {
@@ -22,7 +25,21 @@ const Model = {
             userInfo: response.data,
           },
         });
+        return response.data;
       }
+    },
+    // 获取用户提交信息
+    *fetchStatusList({ payload }, { call, put }) {
+      const response = yield call(getStatusList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          userSubmissionList: Array.isArray(response.data.list)
+            ? response.data.list
+            : [],
+          userSubmissionTotal: response.data.total,
+        },
+      });
     },
     *updateUserInfo({ payload }, { call, put }) {
       const response = yield call(updateUserInfo, payload);

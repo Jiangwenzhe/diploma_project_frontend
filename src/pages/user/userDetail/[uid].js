@@ -2,11 +2,12 @@
  * @Author: Wenzhe
  * @Date: 2020-04-25 16:25:16
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-11 16:22:29
+ * @LastEditTime: 2020-06-07 13:18:34
  */
 import React, { useEffect, useState } from 'react';
 import { connect, Link } from 'umi';
 import { useUnmount } from '@umijs/hooks';
+import moment from 'moment';
 import {
   Divider,
   Tabs,
@@ -22,13 +23,17 @@ import {
   Modal,
   Upload,
   message,
+  Table,
 } from 'antd';
 import {
   createFromIconfontCN,
   LoadingOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
+import StatusTag from '../../../components/StatusTag';
 import icon_font_url from '../../../config/iconfont';
+import { BtoMB } from '../../../utils/tool_fuc';
+import styles from './index.less';
 
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
@@ -41,14 +46,20 @@ const UserDetail = (props) => {
   const {
     match,
     dispatch,
-    userInfo: { userInfo },
+    userInfo: { userInfo, userSubmissionList, userSubmissionTotal },
     // 当前用户 / 用来开启编辑界面
     user: { currentUser },
+    fetchUserSubmissionListLoading,
   } = props;
 
   const [resetPassModalVisible, setResetPassModalVisible] = useState(false);
   const [avatarLoading, setAvatarLoading] = useState(false);
   const [avatarImageUrl, setAvatarImageUrl] = useState(null);
+  const [userSubmissionPagination, setUserSubmissionPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  });
 
   const showResetPassModal = () => {
     setResetPassModalVisible(true);
@@ -70,6 +81,23 @@ const UserDetail = (props) => {
       },
     });
   }, [match, dispatch]);
+
+  useEffect(() => {
+    const { uid } = match.params;
+    dispatch({
+      type: 'userInfo/fetchStatusList',
+      payload: {
+        pagination: userSubmissionPagination,
+        query: {
+          uid,
+          pid: '',
+          username: '',
+          result: '',
+          language: '',
+        },
+      },
+    });
+  }, [dispatch, match, userSubmissionPagination]);
 
   useUnmount(() => {
     dispatch({
@@ -172,6 +200,54 @@ const UserDetail = (props) => {
     //   payload,
     // });
   };
+
+  // ============== userSubmissionList 方法 =====================
+  const userSubmissionTableChangeHandler = (current_pagination) => {
+    setUserSubmissionPagination(current_pagination);
+  };
+
+  const userSubmissionColumns = [
+    {
+      title: '题目',
+      dataIndex: '_id',
+      render: (_, record) => {
+        return (
+          <Link to={`/status/${record._id}`}>
+            {(record.problemInfo && record.problemInfo.title) || '题目已删除'}
+          </Link>
+        );
+      },
+    },
+    {
+      title: '提交时间',
+      dataIndex: 'create_at',
+      render: (time_stamp) => moment(time_stamp).format('YYYY-MM-DD HH:mm:ss'),
+    },
+    {
+      title: '判题结果',
+      dataIndex: 'result',
+      render: (result) => <StatusTag status={result} />,
+    },
+    {
+      title: '执行用时',
+      render: (record) => {
+        console.log(record._id);
+        if (record.result === -2 || !('result' in record)) return 'N/A';
+        return `${record.status_info.real_time__cost} ms`;
+      },
+    },
+    {
+      title: '内存消耗',
+      render: (record) => {
+        if (record.result === -2 || !('result' in record)) return 'N/A';
+        return `${BtoMB(record.status_info.memory_cost)} MB`;
+      },
+    },
+    {
+      title: '执行语言',
+      dataIndex: 'language',
+    },
+  ];
 
   return (
     <div>
@@ -298,8 +374,28 @@ const UserDetail = (props) => {
         <TabPane tab="用户分析" key="2">
           Content of Tab 3
         </TabPane>
+        <TabPane tab="提交记录" key="3">
+          <div>
+            <div className={styles.user_submission_table}>
+              <h2>「{userInfo.name}」的所有提交</h2>
+              <Table
+                columns={userSubmissionColumns}
+                rowKey="_id"
+                bordered
+                onChange={userSubmissionTableChangeHandler}
+                dataSource={userSubmissionList}
+                pagination={{
+                  pagination: userSubmissionPagination,
+                  total: userSubmissionTotal,
+                  showSizeChanger: true,
+                }}
+                loading={fetchUserSubmissionListLoading}
+              />
+            </div>
+          </div>
+        </TabPane>
         {currentUser.uid === userInfo.uid && (
-          <TabPane tab="编辑" key="3" forceRender>
+          <TabPane tab="编辑" key="4" forceRender>
             <Row>
               <Col span={12}>
                 <Form
@@ -462,4 +558,5 @@ export default connect(({ userInfo, loading, user }) => ({
   userInfo,
   user,
   fetchUserInfoLoading: loading.effects['userInfo/fetchUserInfo'],
+  fetchUserSubmissionListLoading: loading.effects['userInfo/fetchStatusList'],
 }))(UserDetail);
