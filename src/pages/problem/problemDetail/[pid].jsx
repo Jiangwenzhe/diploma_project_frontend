@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-16 16:36:43
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-09 11:34:38
+ * @LastEditTime: 2020-06-06 15:35:39
  */
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './index.less';
@@ -96,7 +96,6 @@ const getLastSubmissionFromLocalStorage = (pid) => {
 
 const makeTimeLineItem = (record) => {
   const color = record.result === 0 ? 'green' : 'red';
-  console.log(record);
   return (
     <Timeline.Item key={record._id} color={color}>
       <p>
@@ -149,6 +148,7 @@ const problemDetail = (props) => {
     },
     user: { currentUser },
     submitting,
+    delay_submitting,
   } = props;
 
   function handleLeftTabChange(key) {
@@ -186,7 +186,7 @@ const problemDetail = (props) => {
   const [editorOptions, setEditorOptions] = useState({
     fontSize: '14px',
     minimap: {
-      enabled: false,
+      enabled: true,
     },
   });
   const [editorSettingModalVisible, setEditorSettingModalVisible] = useState(
@@ -435,6 +435,8 @@ const problemDetail = (props) => {
     },
   ];
 
+  console.log(props.submitting);
+
   return (
     <>
       <Row gutter={16}>
@@ -550,12 +552,14 @@ const problemDetail = (props) => {
               <Button
                 style={{ marginLeft: '10px' }}
                 onClick={() => handleEditorRedo()}
+                shape="circle"
               >
                 <ReloadOutlined />
               </Button>
               <Button
                 style={{ marginLeft: '5px' }}
                 onClick={() => showEditorSettingModal()}
+                shape="circle"
               >
                 <SettingOutlined />
               </Button>
@@ -626,13 +630,12 @@ const problemDetail = (props) => {
             )}
             <Button
               size="large"
-              // type="primary"
-              // style={{ padding: '6px 30px', borderRadius: '4px' }}
               onClick={run}
-              loading={
-                submitting ||
-                (currentSubmissionID && !(submissionInfo.result + 3))
-              }
+              // loading={
+              //   submitting ||
+              //   (currentSubmissionID && !(submissionInfo.result + 3))
+              // }
+              loading={submitting || delay_submitting}
             >
               提交 <SendOutlined />
             </Button>
