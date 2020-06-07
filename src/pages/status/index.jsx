@@ -56,9 +56,16 @@ const StatusList = (props) => {
       dataIndex: 'pid',
     },
     {
+      title: '题目',
+      dataIndex: '_id',
+      render: (_, record) => {
+        return (record.problemInfo && record.problemInfo.title) || '题目已删除';
+      },
+    },
+    {
       title: '提交用户',
       render: (_, record) => {
-        return record.userInfo.name;
+        return (record.userInfo && record.userInfo.name) || '已注销';
       },
     },
     {
@@ -70,15 +77,14 @@ const StatusList = (props) => {
       title: 'CPU 用时',
       render: (record) => {
         if (record.result === -2 || !('result' in record)) return '/';
-        return record.status_info.cpu_time_cost;
+        return `${record.status_info.cpu_time_cost} ms`;
       },
     },
     {
       title: '执行用时',
       render: (record) => {
-        console.log(record._id);
         if (record.result === -2 || !('result' in record)) return '/';
-        return record.status_info.real_time__cost;
+        return `${record.status_info.real_time__cost} ms`;
       },
     },
     {
@@ -104,12 +110,12 @@ const StatusList = (props) => {
   };
 
   const handleFormFinish = (values) => {
-    const { pid, name, result, language } = values;
+    const { pid, username, result, language } = values;
     setPagination({ ...pagination, current: 1 });
     setQuery({
       ...query,
       pid,
-      name,
+      username,
       result: result ? result : '',
       language: language ? language : '',
     });
@@ -123,14 +129,14 @@ const StatusList = (props) => {
           form={form}
           initialValues={{
             pid: '',
-            name: '',
+            username: '',
           }}
           onFinish={handleFormFinish}
         >
           <Item label="Pid" name="pid">
             <Input placeholder="请输入 pid" allowClear />
           </Item>
-          <Item label="用户名" name="name">
+          <Item label="用户名" name="username">
             <Input placeholder="请输入用户名" allowClear />
           </Item>
           <Item name="result" label="判题结果">
