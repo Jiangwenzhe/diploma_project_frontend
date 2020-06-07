@@ -2,9 +2,9 @@
  * @Author: Wenzhe
  * @Date: 2020-04-30 16:25:16
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-06-07 16:30:33
+ * @LastEditTime: 2020-06-07 18:50:14
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { connect, history } from 'umi';
 import { useMount, useUnmount } from '@umijs/hooks';
 import ReactMarkdown from 'react-markdown';
@@ -57,6 +57,8 @@ const ArticleDetail = (props) => {
   const [replyDetail, setReplyDetail] = useState('');
   const [currentCommentReplyBox, setCurrentCommentReplyBox] = useState('');
   const [mindMapDrawerVisible, setMindMapDrawerVisible] = useState(false);
+
+  const commentPositionRef = useRef();
 
   useMount(() => {
     const { did } = match.params;
@@ -119,6 +121,33 @@ const ArticleDetail = (props) => {
 
   const hideMapDrawer = () => {
     setMindMapDrawerVisible(false);
+  };
+
+  // 用户评论相关操作
+  const createComment = async () => {
+    const { did } = match.params;
+    const res = await dispatch({
+      type: 'discuss/createComment',
+      payload: {
+        did,
+        payload: {
+          content: commentDetail,
+        },
+      },
+    });
+    if (res === 'comment_success') {
+      setCommentDetail('');
+      await dispatch({
+        type: 'discuss/fetchDiscussDetail',
+        payload: {
+          did,
+        },
+      });
+      window.scrollTo({
+        behavior: 'auto',
+        top: commentPositionRef.current.offsetTop,
+      });
+    }
   };
 
   return (
@@ -199,7 +228,7 @@ const ArticleDetail = (props) => {
             </div>
           </div>
           <div className={styles.shadow} style={{ height: '20px' }}></div>
-          <div>
+          <div ref={commentPositionRef}>
             {discussDetail.comments && discussDetail.comments.length} 条评论
           </div>
           <div className={styles.make_comment}>
@@ -219,7 +248,11 @@ const ArticleDetail = (props) => {
                 onChange={handleEditorChange}
               />
               <div className={styles.comment_button}>
-                <Button className={styles.submit_btn} size="small">
+                <Button
+                  className={styles.submit_btn}
+                  onClick={createComment}
+                  size="small"
+                >
                   评论
                 </Button>
               </div>

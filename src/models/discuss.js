@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 10:51:45
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-06-06 14:42:27
+ * @LastEditTime: 2020-06-07 18:40:05
  */
 
 import {
@@ -16,6 +16,7 @@ import {
   userCollectDiscuss,
   cancelUserCollectDiscuss,
   deleteDiscuss,
+  createComment,
 } from '@/service/discuss';
 
 import { message } from 'antd';
@@ -136,6 +137,12 @@ const Model = {
         yield put({
           type: 'user/fetchCurrent',
         });
+      }
+    },
+    *createComment({ payload }, { call, put }) {
+      const response = yield call(createComment, payload);
+      if (response.data && response.data === '评论添加成功') {
+        return 'comment_success';
       }
     },
     *changeCommunicationQuery({ payload }, { put }) {
