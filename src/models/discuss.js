@@ -18,6 +18,7 @@ import {
   deleteDiscuss,
   createComment,
   deleteComment,
+  createReply,
 } from '@/service/discuss';
 
 import { message } from 'antd';
@@ -151,6 +152,12 @@ const Model = {
       if (response.data && response.data === '删除评论成功') {
         message.success('删除评论成功');
         return 'delete_comment_success';
+      }
+    },
+    *createReply({ payload }, { call }) {
+      const response = yield call(createReply, payload);
+      if (response.data && response.data === '评论添加成功') {
+        return 'comment_success';
       }
     },
     *changeCommunicationQuery({ payload }, { put }) {

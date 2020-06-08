@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-30 16:25:16
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-06-07 19:34:09
+ * @LastEditTime: 2020-06-08 09:43:03
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { connect, history } from 'umi';
@@ -105,15 +105,28 @@ const ArticleDetail = (props) => {
     setReplyDetail(text);
   }
 
-  const showcurrentCommentReplyBox = (comment) => {
-    const { _id, authorInfo } = comment;
-    if (currentCommentReplyBox === _id) {
-      setCurrentCommentReplyBox('');
-      setReplyDetail('');
-      return;
+  const showcurrentCommentReplyBox = (comment, type, reply) => {
+    console.log(comment);
+    if (type === 'reply') {
+      const { _id } = comment;
+      const { authorInfo } = reply;
+      if (currentCommentReplyBox === _id) {
+        setCurrentCommentReplyBox('');
+        setReplyDetail('');
+        return;
+      }
+      setCurrentCommentReplyBox(_id);
+      setReplyDetail(`@${authorInfo.name} `);
+    } else {
+      const { _id, authorInfo } = comment;
+      if (currentCommentReplyBox === _id) {
+        setCurrentCommentReplyBox('');
+        setReplyDetail('');
+        return;
+      }
+      setCurrentCommentReplyBox(_id);
+      setReplyDetail(`@${authorInfo.name} `);
     }
-    setCurrentCommentReplyBox(_id);
-    setReplyDetail(`@${authorInfo.name} `);
   };
 
   const showMapDrawer = () => {
@@ -161,6 +174,34 @@ const ArticleDetail = (props) => {
     });
     if (res === 'delete_comment_success') {
       setCommentDetail('');
+      await dispatch({
+        type: 'discuss/fetchDiscussDetail',
+        payload: {
+          did,
+        },
+      });
+      window.scrollTo({
+        behavior: 'auto',
+        top: commentPositionRef.current.offsetTop,
+      });
+    }
+  };
+
+  const createReply = async () => {
+    const { did } = match.params;
+    const res = await dispatch({
+      type: 'discuss/createReply',
+      payload: {
+        comment_id: currentCommentReplyBox,
+        payload: {
+          reply_user_id: currentUser._id,
+          content: replyDetail,
+        },
+      },
+    });
+    if (res === 'comment_success') {
+      setReplyDetail('');
+      setCurrentCommentReplyBox('');
       await dispatch({
         type: 'discuss/fetchDiscussDetail',
         payload: {
@@ -289,7 +330,9 @@ const ArticleDetail = (props) => {
                       actions={[
                         <span
                           key="comment-list-reply-to-0"
-                          onClick={() => showcurrentCommentReplyBox(comment)}
+                          onClick={() =>
+                            showcurrentCommentReplyBox(comment, 'comment')
+                          }
                         >
                           回复
                         </span>,
@@ -338,32 +381,132 @@ const ArticleDetail = (props) => {
                           </span>
                         </Tooltip>
                       }
-                    />
-                    <div key={comment._id + '123'}>
-                      {comment._id === currentCommentReplyBox && (
-                        <div className={styles.replybox}>
-                          <MdEditor
-                            config={{
-                              view: {
-                                menu: false,
-                                md: true,
-                                html: false,
-                              },
-                            }}
-                            className={styles.comment_editor}
-                            style={{ height: '100px', width: '100%' }}
-                            value={replyDetail}
-                            renderHTML={(text) => mdParser.render(text)}
-                            onChange={handleReplyEditorChange}
-                          />
-                          <div className={styles.comment_button}>
-                            <Button className={styles.submit_btn} size="small">
-                              评论
-                            </Button>
+                    >
+                      <div key={comment._id + '123'}>
+                        {comment._id === currentCommentReplyBox && (
+                          <div className={styles.replybox}>
+                            <MdEditor
+                              config={{
+                                view: {
+                                  menu: false,
+                                  md: true,
+                                  html: false,
+                                },
+                              }}
+                              className={styles.comment_editor}
+                              style={{ height: '100px', width: '100%' }}
+                              value={replyDetail}
+                              renderHTML={(text) => mdParser.render(text)}
+                              onChange={handleReplyEditorChange}
+                            />
+                            <div className={styles.comment_button}>
+                              <Button
+                                className={styles.submit_btn}
+                                size="small"
+                                onClick={() => createReply()}
+                              >
+                                评论
+                              </Button>
+                            </div>
                           </div>
-                        </div>
-                      )}
-                    </div>
+                        )}
+                      </div>
+                      {comment.replys &&
+                        comment.replys.length > 0 &&
+                        comment.replys.map((reply) => (
+                          <div key={reply._id}>
+                            <Comment
+                              actions={[
+                                <span
+                                  key="comment-list-reply-to-4"
+                                  onClick={() =>
+                                    showcurrentCommentReplyBox(
+                                      comment,
+                                      'reply',
+                                      reply,
+                                    )
+                                  }
+                                >
+                                  回复
+                                </span>,
+                                // <span key="comment-list-reply-to-1">
+                                //   {currentUser._id === comment.comment_user_id && (
+                                //     <span
+                                //       key="comment-list-reply-to-2"
+                                //       onClick={() => deleteComment(comment._id)}
+                                //     >
+                                //       删除
+                                //     </span>
+                                //   )}
+                                // </span>,
+                              ]}
+                              key={reply._id}
+                              className={[styles.comment].join(' ')}
+                              author={
+                                <span className={styles.name}>
+                                  {reply.authorInfo.name}
+                                </span>
+                              }
+                              avatar={
+                                <Avatar
+                                  src={reply.authorInfo.avatar}
+                                  alt={reply.authorInfo.name}
+                                />
+                              }
+                              content={
+                                <div className="markdown-body">
+                                  <ReactMarkdown
+                                    source={reply.content}
+                                    escapeHtml={false}
+                                  />
+                                </div>
+                              }
+                              datetime={
+                                <Tooltip
+                                  title={moment(reply.createdAt)
+                                    .locale('zh-cn')
+                                    .format('YYYY-MM-DD HH:mm:ss')}
+                                >
+                                  <span>
+                                    {moment(reply.createdAt)
+                                      .locale('zh-cn')
+                                      .fromNow()}
+                                  </span>
+                                </Tooltip>
+                              }
+                            />
+                            <div key={reply._id + '123'}>
+                              {reply._id === currentCommentReplyBox && (
+                                <div className={styles.replybox}>
+                                  <MdEditor
+                                    config={{
+                                      view: {
+                                        menu: false,
+                                        md: true,
+                                        html: false,
+                                      },
+                                    }}
+                                    className={styles.comment_editor}
+                                    style={{ height: '100px', width: '100%' }}
+                                    value={replyDetail}
+                                    renderHTML={(text) => mdParser.render(text)}
+                                    onChange={handleReplyEditorChange}
+                                  />
+                                  <div className={styles.comment_button}>
+                                    <Button
+                                      className={styles.submit_btn}
+                                      size="small"
+                                      onClick={() => createReply()}
+                                    >
+                                      评论
+                                    </Button>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                    </Comment>
                   </div>
                 ))}
             </div>
