@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-22 09:34:08
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-06-08 09:25:44
+ * @LastEditTime: 2020-06-08 10:24:57
  */
 import request from '@/utils/request';
 
@@ -94,4 +94,14 @@ export async function createReply(params) {
     method: 'POST',
     data: payload,
   });
+}
+
+export async function deleteReply(params) {
+  const { comment_id, reply_id } = params;
+  return request(
+    `/api/discuss_delete_reply?comment_id=${comment_id}&reply_id=${reply_id}`,
+    {
+      method: 'DELETE',
+    },
+  );
 }

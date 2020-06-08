@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 10:51:45
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-06-07 19:33:33
+ * @LastEditTime: 2020-06-08 10:24:06
  */
 
 import {
@@ -19,6 +19,7 @@ import {
   createComment,
   deleteComment,
   createReply,
+  deleteReply,
 } from '@/service/discuss';
 
 import { message } from 'antd';
@@ -158,6 +159,13 @@ const Model = {
       const response = yield call(createReply, payload);
       if (response.data && response.data === '评论添加成功') {
         return 'comment_success';
+      }
+    },
+    *deleteReply({ payload }, { call }) {
+      const response = yield call(deleteReply, payload);
+      if (response.data && response.data === '删除回复成功') {
+        message.success('删除回复成功');
+        return 'delete_reply_success';
       }
     },
     *changeCommunicationQuery({ payload }, { put }) {

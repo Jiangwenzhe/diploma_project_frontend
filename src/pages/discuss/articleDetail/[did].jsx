@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-30 16:25:16
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-06-08 09:43:03
+ * @LastEditTime: 2020-06-08 10:35:50
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { connect, history } from 'umi';
@@ -17,7 +17,9 @@ import {
   Tooltip,
   Comment,
   Skeleton,
+  Divider,
 } from 'antd';
+import { CommentOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import CodeBlock from '../../../components/CodeBlock';
 import hljs from 'highlight.js';
@@ -106,7 +108,6 @@ const ArticleDetail = (props) => {
   }
 
   const showcurrentCommentReplyBox = (comment, type, reply) => {
-    console.log(comment);
     if (type === 'reply') {
       const { _id } = comment;
       const { authorInfo } = reply;
@@ -215,6 +216,30 @@ const ArticleDetail = (props) => {
     }
   };
 
+  const deleteReply = async (comment_id, reply_id) => {
+    const { did } = match.params;
+    const res = await dispatch({
+      type: 'discuss/deleteReply',
+      payload: {
+        comment_id,
+        reply_id,
+      },
+    });
+    if (res === 'delete_reply_success') {
+      setCommentDetail('');
+      await dispatch({
+        type: 'discuss/fetchDiscussDetail',
+        payload: {
+          did,
+        },
+      });
+      window.scrollTo({
+        behavior: 'auto',
+        top: commentPositionRef.current.offsetTop,
+      });
+    }
+  };
+
   return (
     <div className={styles.main}>
       <div className={styles.main_content}>
@@ -292,10 +317,12 @@ const ArticleDetail = (props) => {
               />
             </div>
           </div>
-          <div className={styles.shadow} style={{ height: '20px' }}></div>
-          <div ref={commentPositionRef}>
+          <div ref={commentPositionRef} />
+          <Divider orientation="left">
             {discussDetail.comments && discussDetail.comments.length} 条评论
-          </div>
+            &nbsp;
+            <CommentOutlined />
+          </Divider>
           <div className={styles.make_comment}>
             <div className={styles.editor}>
               <MdEditor
@@ -429,16 +456,18 @@ const ArticleDetail = (props) => {
                                 >
                                   回复
                                 </span>,
-                                // <span key="comment-list-reply-to-1">
-                                //   {currentUser._id === comment.comment_user_id && (
-                                //     <span
-                                //       key="comment-list-reply-to-2"
-                                //       onClick={() => deleteComment(comment._id)}
-                                //     >
-                                //       删除
-                                //     </span>
-                                //   )}
-                                // </span>,
+                                <span key="comment-list-reply-to-1">
+                                  {currentUser._id === reply.reply_user_id && (
+                                    <span
+                                      key="comment-list-reply-to-2"
+                                      onClick={() =>
+                                        deleteReply(comment._id, reply._id)
+                                      }
+                                    >
+                                      删除
+                                    </span>
+                                  )}
+                                </span>,
                               ]}
                               key={reply._id}
                               className={[styles.comment].join(' ')}
