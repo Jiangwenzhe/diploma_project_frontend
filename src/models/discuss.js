@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 10:51:45
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-06-08 10:24:06
+ * @LastEditTime: 2020-06-08 15:38:52
  */
 
 import {
@@ -20,6 +20,7 @@ import {
   deleteComment,
   createReply,
   deleteReply,
+  deleteJoinDiscuss,
 } from '@/service/discuss';
 
 import { message } from 'antd';
@@ -121,6 +122,13 @@ const Model = {
           payload: { did: payload.did },
         });
         return 'success';
+      }
+    },
+    *deleteJoinDiscuss({ payload }, { call }) {
+      const response = yield call(deleteJoinDiscuss, payload);
+      if (response.data && response.data === '删除讨论成功') {
+        message.success('删除讨论成功');
+        return 'delete_discuss_success';
       }
     },
     *userCollectDiscuss({ payload }, { call }) {

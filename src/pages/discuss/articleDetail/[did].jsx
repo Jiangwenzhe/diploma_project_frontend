@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-30 16:25:16
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-06-08 10:35:50
+ * @LastEditTime: 2020-06-08 15:53:48
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { connect, history } from 'umi';
@@ -18,6 +18,7 @@ import {
   Comment,
   Skeleton,
   Divider,
+  Popconfirm,
 } from 'antd';
 import { CommentOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -174,7 +175,6 @@ const ArticleDetail = (props) => {
       },
     });
     if (res === 'delete_comment_success') {
-      setCommentDetail('');
       await dispatch({
         type: 'discuss/fetchDiscussDetail',
         payload: {
@@ -226,7 +226,6 @@ const ArticleDetail = (props) => {
       },
     });
     if (res === 'delete_reply_success') {
-      setCommentDetail('');
       await dispatch({
         type: 'discuss/fetchDiscussDetail',
         payload: {
@@ -365,12 +364,15 @@ const ArticleDetail = (props) => {
                         </span>,
                         <span key="comment-list-reply-to-1">
                           {currentUser._id === comment.comment_user_id && (
-                            <span
-                              key="comment-list-reply-to-2"
-                              onClick={() => deleteComment(comment._id)}
+                            <Popconfirm
+                              placement="right"
+                              title={`确定要删除该评论吗？`}
+                              onConfirm={() => deleteComment(comment._id)}
+                              okText="删除"
+                              cancelText="取消"
                             >
-                              删除
-                            </span>
+                              <span key="comment-list-reply-to-2">删除</span>
+                            </Popconfirm>
                           )}
                         </span>,
                       ]}
@@ -458,14 +460,19 @@ const ArticleDetail = (props) => {
                                 </span>,
                                 <span key="comment-list-reply-to-1">
                                   {currentUser._id === reply.reply_user_id && (
-                                    <span
-                                      key="comment-list-reply-to-2"
-                                      onClick={() =>
+                                    <Popconfirm
+                                      placement="right"
+                                      title={`确定要删除该评论吗？`}
+                                      onConfirm={() =>
                                         deleteReply(comment._id, reply._id)
                                       }
+                                      okText="删除"
+                                      cancelText="取消"
                                     >
-                                      删除
-                                    </span>
+                                      <span key="comment-list-reply-to-2">
+                                        删除
+                                      </span>
+                                    </Popconfirm>
                                   )}
                                 </span>,
                               ]}

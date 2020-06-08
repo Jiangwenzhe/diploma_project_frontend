@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-22 09:34:08
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-06-08 10:24:57
+ * @LastEditTime: 2020-06-08 15:36:05
  */
 import request from '@/utils/request';
 
@@ -51,6 +51,12 @@ export async function joinDuscuss(params) {
   return request(`/api/discuss/joindiscuss/${did}`, {
     method: 'POST',
     data: payload,
+  });
+}
+
+export async function deleteJoinDiscuss(params) {
+  return request(`/api/discuss/deleteDiscuss/${params.id}`, {
+    method: 'DELETE',
   });
 }
 

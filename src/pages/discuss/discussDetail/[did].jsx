@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-30 16:25:16
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-05-14 16:28:15
+ * @LastEditTime: 2020-06-08 15:50:26
  */
 import React, { useState } from 'react';
 import { connect, history } from 'umi';
@@ -19,6 +19,7 @@ import {
   Tooltip,
   Breadcrumb,
   Divider,
+  Popconfirm,
 } from 'antd';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
@@ -37,6 +38,7 @@ const DiscussDetail = (props) => {
     match,
     dispatch,
     discuss: { discussDetail },
+    user: { currentUser },
   } = props;
 
   const [formDetail, setFormDetail] = useState('');
@@ -112,6 +114,29 @@ const DiscussDetail = (props) => {
         setFormDetail('');
       }
     });
+  };
+
+  const deleteDiscuss = async (id) => {
+    const { did } = match.params;
+    const res = await dispatch({
+      type: 'discuss/deleteJoinDiscuss',
+      payload: {
+        id,
+      },
+    });
+    console.log(res);
+    if (res === 'delete_discuss_success') {
+      await dispatch({
+        type: 'discuss/fetchDiscussDetail',
+        payload: {
+          did,
+        },
+      });
+      // window.scrollTo({
+      //   behavior: 'auto',
+      //   top: commentPositionRef.current.offsetTop,
+      // });
+    }
   };
 
   const count_discuss_user = (discussList) => {
@@ -256,7 +281,26 @@ const DiscussDetail = (props) => {
             <div className={[styles.comment_list].join(' ')}>
               {discussDetail.discussList.map((discuss) => (
                 <Comment
-                  //  actions={actions}
+                  actions={[
+                    <span key="comment-list-reply-to-1">
+                      {currentUser._id === discuss.discuss_user_id && (
+                        <Popconfirm
+                          placement="right"
+                          title={`确定要删除该讨论吗？`}
+                          onConfirm={() => deleteDiscuss(discuss._id)}
+                          okText="删除"
+                          cancelText="取消"
+                        >
+                          <span
+                            key="comment-list-reply-to-2"
+                            // onClick={() => deleteDiscuss(discuss._id)}
+                          >
+                            删除
+                          </span>
+                        </Popconfirm>
+                      )}
+                    </span>,
+                  ]}
                   key={discuss._id}
                   className={[styles.shadow, styles.comment].join(' ')}
                   author={
@@ -313,7 +357,8 @@ const DiscussDetail = (props) => {
   );
 };
 
-export default connect(({ discuss, loading }) => ({
+export default connect(({ discuss, loading, user }) => ({
   discuss,
+  user,
   fetchDiscussDetailLoading: loading.effects['discuss/fetchDiscussDetail'],
 }))(DiscussDetail);
