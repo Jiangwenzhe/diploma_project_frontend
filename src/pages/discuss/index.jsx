@@ -61,6 +61,7 @@ const Discuss = (props) => {
   const [discussFormVisible, setDiscussFormVisible] = useState(false);
   const [discussFormType, setDiscussFormType] = useState('');
   const [isDiscussFormUpdate, setIsDiscussFormUpdate] = useState(false);
+  const [updateDiscussValue, setUpdateDiscussValue] = useState('');
 
   // '', 'interview/面试', 'algorithm/数据结构与算法', 'question/题目讨论'， 'work/工作', 'news/新闻', 'feedback/反馈'
   const categories = [
@@ -248,6 +249,9 @@ const Discuss = (props) => {
   // 隐藏 DiscussForm
   const hideDiscussForm = () => {
     setDiscussFormVisible(false);
+    setDiscussFormType('');
+    setIsDiscussFormUpdate(false);
+    setDiscussFormVisible('');
   };
 
   const changeTitleSearch = (e) => {
@@ -259,6 +263,15 @@ const Discuss = (props) => {
 
   const handleTitleSearch = () => {
     setTitleSearch(search);
+  };
+
+  // 显示 DiscussForm 用于更新 文章/讨论
+  const updateDiscuss = (discussValue, type) => {
+    console.log('into updateDiscuss func');
+    setDiscussFormVisible(true);
+    setIsDiscussFormUpdate(true);
+    setDiscussFormType(type);
+    setUpdateDiscussValue(discussValue);
   };
 
   return (
@@ -325,6 +338,7 @@ const Discuss = (props) => {
                   }
                   discussInfo={discuss}
                   refetchDiscussList={refetchDiscussList}
+                  updateDiscuss={updateDiscuss}
                 />
               ))}
               <Pagination
@@ -449,6 +463,7 @@ const Discuss = (props) => {
         discussTags={discussTags}
         refetchDiscussList={refetchDiscussList}
         isUpdate={isDiscussFormUpdate}
+        updateValues={updateDiscussValue}
       />
     </div>
   );

@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 12:57:33
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-06-06 14:45:02
+ * @LastEditTime: 2020-06-08 19:00:07
  */
 import React, { useState, useEffect } from 'react';
 import {
@@ -37,6 +37,7 @@ const DiscussItem = (props) => {
     dispatch,
     user: { currentUser },
     refetchDiscussList,
+    updateDiscuss,
   } = props;
   const {
     authorInfo,
@@ -219,7 +220,13 @@ const DiscussItem = (props) => {
                             placement="top"
                             content={
                               <>
-                                <Button type="text" size="small">
+                                <Button
+                                  type="text"
+                                  size="small"
+                                  onClick={() =>
+                                    updateDiscuss(discussInfo, discussInfo.type)
+                                  }
+                                >
                                   编辑
                                 </Button>
                                 <Popconfirm
@@ -253,7 +260,13 @@ const DiscussItem = (props) => {
                           placement="top"
                           content={
                             <>
-                              <Button type="text" size="small">
+                              <Button
+                                type="text"
+                                size="small"
+                                onClick={() =>
+                                  updateDiscuss(discussInfo, discussInfo.type)
+                                }
+                              >
                                 编辑
                               </Button>
                               <Popconfirm

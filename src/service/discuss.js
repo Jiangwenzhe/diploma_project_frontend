@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-22 09:34:08
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-06-08 15:36:05
+ * @LastEditTime: 2020-06-08 19:21:28
  */
 import request from '@/utils/request';
 
@@ -43,6 +43,14 @@ export async function createDiscuss(params) {
   return request('/api/discuss', {
     method: 'POST',
     data: params,
+  });
+}
+
+export async function updateDiscuss(params) {
+  const { data, did } = params;
+  return request(`/api/discuss/${did}`, {
+    method: 'PUT',
+    data,
   });
 }
 

@@ -2,7 +2,7 @@
  * @Author: Wenzhe
  * @Date: 2020-04-27 10:51:45
  * @LastEditors: Wenzhe
- * @LastEditTime: 2020-06-08 15:38:52
+ * @LastEditTime: 2020-06-08 19:27:23
  */
 
 import {
@@ -11,6 +11,7 @@ import {
   getMyDiscussInfo,
   getDiscussDetail,
   createDiscuss,
+  updateDiscuss,
   joinDuscuss,
   getUserCollectDiscuss,
   userCollectDiscuss,
@@ -104,6 +105,14 @@ const Model = {
           }已创建成功`,
         );
         return 'create_success';
+      }
+    },
+    *updateDiscuss({ payload }, { call }) {
+      const response = yield call(updateDiscuss, payload);
+      console.log('updayte res', response);
+      if (response.data && response.data.status) {
+        message.success('更新成功');
+        return 'update_success';
       }
     },
     *deleteDiscuss({ payload }, { call }) {

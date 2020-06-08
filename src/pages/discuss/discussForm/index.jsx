@@ -4,7 +4,7 @@ import MdEditor from 'react-markdown-editor-lite';
 import { Select, Divider, Input, Form, Button, Drawer } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import styles from './index.less';
-import { connect, history } from 'umi';
+import { connect } from 'umi';
 import 'react-markdown-editor-lite/lib/index.css';
 import {
   categoryToCN,
@@ -18,18 +18,18 @@ const { Option } = Select;
 // 初始化Markdown解析器
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
-const makeSubmitButtonValue = (type) => {
+const makeSubmitButtonValue = (type, isUpdate) => {
   if (type === 'article')
     return (
       <span>
-        发表文章&nbsp;
+        {isUpdate ? '更新' : '发表'}文章&nbsp;
         <SendOutlined />
       </span>
     );
   if (type === 'discuss')
     return (
       <span>
-        发起讨论&nbsp;
+        {isUpdate ? '更新' : '发起'}讨论&nbsp;
         <SendOutlined />
       </span>
     );
@@ -43,6 +43,8 @@ const DiscussForm = (props) => {
     discussTags,
     dispatch,
     refetchDiscussList,
+    isUpdate,
+    updateValues,
   } = props;
 
   const [form] = Form.useForm();
@@ -77,15 +79,25 @@ const DiscussForm = (props) => {
   }, [discussTags]);
 
   useEffect(() => {
-    if (discussFormVisible) {
+    if (discussFormVisible && !isUpdate) {
+      form.resetFields();
       if (type === 'article') {
         setFormDetail(article_template);
       }
       if (type === 'discuss') {
         setFormDetail(discuss_template);
       }
+    } else {
+      if (updateValues._id) {
+        setFormDetail(updateValues.detail);
+        form.setFieldsValue({
+          title: updateValues.title,
+          tags: updateValues.tags,
+          category: updateValues.category,
+        });
+      }
     }
-  }, [discussFormVisible, type]);
+  }, [discussFormVisible, type, isUpdate, form]);
 
   // 当关闭 Drawer 以后需要重置表单
   const closeDrawer = () => {
@@ -94,22 +106,35 @@ const DiscussForm = (props) => {
     handleHideDiscussForm();
   };
 
-  const handleFormSubmit = (values) => {
-    console.log('Success:', values);
+  const handleFormSubmit = async (values) => {
     const payload = {
       ...values,
       detail: formDetail,
       type,
     };
-    dispatch({
-      type: 'discuss/createDiscuss',
-      payload: payload,
-    }).then((value) => {
-      if (value === 'create_success') {
+    if (isUpdate) {
+      const updatePayload = {
+        data: payload,
+        did: updateValues._id,
+      };
+      const result = await dispatch({
+        type: 'discuss/updateDiscuss',
+        payload: updatePayload,
+      });
+      if (result === 'update_success') {
         refetchDiscussList();
         closeDrawer();
       }
+      return;
+    }
+    const result = await dispatch({
+      type: 'discuss/createDiscuss',
+      payload: payload,
     });
+    if (result === 'create_success') {
+      refetchDiscussList();
+      closeDrawer();
+    }
   };
 
   return (
@@ -189,7 +214,9 @@ const DiscussForm = (props) => {
                 </Select>
               </Form.Item>
               <Form.Item>
-                <Button htmlType="submit">{makeSubmitButtonValue(type)}</Button>
+                <Button htmlType="submit">
+                  {makeSubmitButtonValue(type, isUpdate)}
+                </Button>
               </Form.Item>
             </Form>
           </div>
@@ -202,7 +229,7 @@ const DiscussForm = (props) => {
         bodyStyle={{ padding: 0 }}
         headerStyle={{ padding: '10px' }}
         forceRender
-        destroyOnClose={true}
+        destroyOnClose
         closable
       >
         <div>
